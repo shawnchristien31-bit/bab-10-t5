@@ -1,0 +1,2954 @@
+<!DOCTYPE html>
+<html lang="ms" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHESS HISTORY CHAMPION 2026 | Sejarah Tingkatan 5 Bab 10</title>
+    
+    <!-- Keperluan Sambungan Internet: Pustaka CDN untuk Tailwind CSS, Three.js, Chess.js, Tone.js & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            950: '#040814',
+                            900: '#0a1128',
+                            800: '#101f42',
+                            700: '#1b3163'
+                        },
+                        gold: {
+                            300: '#fde08d',
+                            400: '#f5c542',
+                            500: '#d4af37',
+                            600: '#aa820a'
+                        },
+                        electric: {
+                            400: '#38bdf8',
+                            500: '#00d2ff',
+                            600: '#0284c7'
+                        }
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Gaya Kustom Premium 3D Chess Arena */
+        body {
+            background-color: #040814;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Glassmorphism & Gold Borders */
+        .arena-panel {
+            background: rgba(10, 17, 40, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 210, 255, 0.1);
+        }
+
+        .arena-panel-gold {
+            background: linear-gradient(145deg, rgba(16, 31, 66, 0.92), rgba(10, 17, 40, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.6);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.2);
+        }
+
+        /* Butang Permainan Berkilau */
+        .btn-gold {
+            background: linear-gradient(135deg, #f5c542 0%, #d4af37 50%, #aa820a 100%);
+            color: #040814;
+            font-weight: 800;
+            border: 1px solid #fde08d;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 6px 22px rgba(212, 175, 55, 0.65), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            filter: brightness(1.08);
+        }
+        .btn-gold:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .btn-electric {
+            background: linear-gradient(135deg, #00d2ff 0%, #0284c7 100%);
+            color: #ffffff;
+            font-weight: 700;
+            border: 1px solid #7dd3fc;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.35);
+            transition: all 0.25s ease;
+        }
+        .btn-electric:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 210, 255, 0.6);
+            filter: brightness(1.1);
+        }
+
+        .btn-navy {
+            background: rgba(16, 31, 66, 0.9);
+            color: #e2e8f0;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            transition: all 0.2s ease;
+        }
+        .btn-navy:hover:not(:disabled) {
+            background: rgba(27, 49, 99, 0.95);
+            border-color: #d4af37;
+            color: #fde08d;
+            transform: translateY(-1px);
+        }
+
+        /* Kanvas 3D */
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            background: radial-gradient(circle at center, #101f42 0%, #040814 100%);
+            overflow: hidden;
+            border-radius: 0.75rem;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            outline: none;
+        }
+
+        /* Scrollbar Kustom */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #040814;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1b3163;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4af37;
+        }
+
+        /* Animasi Teks Emas */
+        .gold-gradient-text {
+            background: linear-gradient(to right, #fde08d, #d4af37, #fffbeb, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgba(212, 175, 55, 0.8); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+            50% { border-color: rgba(0, 210, 255, 0.9); box-shadow: 0 0 25px rgba(0, 210, 255, 0.6); }
+        }
+
+        .active-turn-glow {
+            animation: pulse-border 2.5s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-navy-950 text-slate-100">
+
+    <!-- ==========================================
+         BAHAGIAN ATAS: BAR NAVIGASI & STATUS UTAMA
+         ========================================== -->
+    <header class="arena-panel border-b border-gold-500/30 px-3 py-2 sm:px-6 sm:py-2.5 z-30 sticky top-0">
+        <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-2">
+            <!-- Logo & Identiti Sekolah -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="app.showScreen('home')">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-navy-950 shadow-lg shadow-gold-500/20 border border-gold-300">
+                    <i class="fa-solid fa-chess-king text-xl sm:text-2xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-cinzel font-extrabold text-sm sm:text-lg tracking-wider gold-gradient-text">CHESS HISTORY CHAMPION 2026</h1>
+                        <span class="hidden md:inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-electric-500/20 text-electric-400 border border-electric-500/40">Bab 10 Ting. 5</span>
+                    </div>
+                    <p class="text-[10px] sm:text-xs text-slate-400">SMK Chinta Mata, Tenom • Cikgu Shawn Christien Fabian</p>
+                </div>
+            </div>
+
+            <!-- Bar Maklumat Misi Semasa (Aktif semasa permainan) -->
+            <div id="top-mission-bar" class="hidden lg:flex items-center gap-4 bg-navy-900/90 px-4 py-1.5 rounded-xl border border-gold-500/30">
+                <div class="flex items-center gap-2">
+                    <span id="top-stage-icon" class="text-gold-400 text-lg"><i class="fa-solid fa-chess-pawn"></i></span>
+                    <div>
+                        <div id="top-mission-name" class="text-xs font-bold text-gold-300 uppercase tracking-wider">MISSION 01: GLOBAL CRISIS</div>
+                        <div id="top-mission-sub" class="text-[10px] text-slate-400">Tahap 1: Pawn Challenge</div>
+                    </div>
+                </div>
+                <div class="h-6 w-[1px] bg-slate-700"></div>
+                <div class="flex items-center gap-3">
+                    <div class="text-xs">
+                        <span class="text-slate-400">Soalan:</span>
+                        <span id="top-q-progress" class="font-bold text-electric-400 ml-1">1 / 30</span>
+                    </div>
+                    <div class="w-24 bg-navy-950 h-2 rounded-full overflow-hidden border border-slate-700">
+                        <div id="top-q-bar" class="bg-gradient-to-r from-electric-500 to-gold-400 h-full transition-all duration-300" style="width: 3.3%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistik Pantas & Kawalan Audio -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="bg-navy-900/90 border border-gold-500/30 px-2.5 py-1 rounded-lg flex items-center gap-2 text-xs">
+                    <i class="fa-solid fa-trophy text-gold-400"></i>
+                    <span class="text-slate-400 hidden sm:inline">Markah:</span>
+                    <span id="header-score" class="font-extrabold text-gold-300">0</span>
+                </div>
+                <div class="bg-navy-900/90 border border-electric-500/30 px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-xs" title="Chess Power Points (Untuk Petunjuk & Bantuan)">
+                    <i class="fa-solid fa-bolt text-electric-400"></i>
+                    <span id="header-cpp" class="font-extrabold text-electric-400">2</span>
+                    <span class="text-[10px] text-slate-400 hidden sm:inline">CPP</span>
+                </div>
+                <button onclick="app.toggleSound()" id="btn-sound-top" class="btn-navy w-9 h-9 rounded-lg flex items-center justify-center text-sm" title="Bunyi Hidup/Mati">
+                    <i class="fa-solid fa-volume-high text-electric-400"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         KANDUNGAN UTAMA (SKRIN DINAMIK)
+         ========================================== -->
+    <main class="flex-1 flex flex-col max-w-[1600px] w-full mx-auto p-2 sm:p-4 overflow-hidden">
+
+        <!-- 1. SKRIN HALAMAN UTAMA (HOME MENU) -->
+        <section id="screen-home" class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-center my-auto py-2">
+            <!-- Kiri: Maklumat Permainan & Butang Navigasi -->
+            <div class="lg:col-span-7 space-y-4 sm:space-y-5 arena-panel p-5 sm:p-8 rounded-2xl relative overflow-hidden">
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-electric-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-500/40 text-gold-300 text-xs font-bold tracking-wide">
+                    <i class="fa-solid fa-star"></i> MISI KECEMERLANGAN SEJARAH SPM 2026
+                </div>
+
+                <div class="space-y-2">
+                    <h2 class="font-cinzel text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                        <span class="gold-gradient-text">CHESS HISTORY</span><br>
+                        <span class="text-white">CHAMPION 2026</span>
+                    </h2>
+                    <p class="text-xs sm:text-sm font-bold text-electric-400 tracking-widest uppercase">
+                        "Kuasai Papan Catur, Takluk Cabaran Sejarah, Buktikan Kecemerlangan!"
+                    </p>
+                </div>
+
+                <div class="bg-navy-900/80 border border-slate-700/80 rounded-xl p-3.5 sm:p-4 space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm">
+                        <span class="font-bold text-gold-400"><i class="fa-solid fa-book-open mr-1.5"></i>Subjek: Sejarah Tingkatan 5</span>
+                        <span class="px-2 py-0.5 rounded bg-electric-500/20 text-electric-400 font-semibold text-xs">30 Cabaran • 5 Misi • 1 Juara</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 font-medium">
+                        <strong>Bab 10:</strong> Kecemerlangan Malaysia di Persada Dunia
+                    </p>
+                    <p class="text-[11px] sm:text-xs text-slate-400">
+                        Disediakan khas oleh <strong>Cikgu Shawn Christien Fabian</strong> (SMK Chinta Mata, Tenom, Sabah) untuk calon-calon SPM 2026. Jawab soalan objektif Sejarah dalam masa 30 saat untuk membuka kunci strategi gerakan buah catur 3D!
+                    </p>
+                </div>
+
+                <!-- Pilihan Nama & Tetapan Pantas -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div>
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-bold mb-1">Nama Pemain 1 (Pasukan Malaysia - Putih)</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user-graduate absolute left-3 top-1/2 -translate-y-1/2 text-gold-400 text-xs"></i>
+                            <input type="text" id="input-player1" value="Calon Cemerlang SPM" class="w-full bg-navy-950 border border-gold-500/40 rounded-lg pl-8 pr-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-electric-400" placeholder="Masukkan nama anda...">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-bold mb-1">Tahap Komputer AI / Lawan</label>
+                        <select id="select-difficulty" onchange="app.setDifficulty(this.value)" class="w-full bg-navy-950 border border-electric-500/40 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-gold-400">
+                            <option value="easy">AI Mudah (Peringkat Asas)</option>
+                            <option value="medium" selected>AI Sederhana (Taktikal)</option>
+                            <option value="hard">AI Sukar (Strategi Master)</option>
+                            <option value="2p">2 Pemain (Pertandingan Kelas)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Butang Utama -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <button onclick="app.startGame('challenge')" class="btn-gold py-3.5 px-5 rounded-xl flex items-center justify-center gap-2.5 text-sm sm:text-base shadow-xl">
+                        <i class="fa-solid fa-play"></i> MULA PERMAINAN (MISI SEJARAH)
+                    </button>
+                    <button onclick="app.openModal('mode')" class="btn-electric py-3.5 px-5 rounded-xl flex items-center justify-center gap-2.5 text-sm sm:text-base">
+                        <i class="fa-solid fa-chess-board"></i> PILIH MOD & MISI
+                    </button>
+                </div>
+
+                <!-- Butang Sekunder -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                    <button onclick="app.openModal('guide')" class="btn-navy py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-circle-question text-electric-400"></i> Panduan
+                    </button>
+                    <button onclick="app.openModal('records')" class="btn-navy py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-medal text-gold-400"></i> Pencapaian
+                    </button>
+                    <button onclick="app.openModal('study')" class="btn-navy py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-book-bookmark text-emerald-400"></i> Ulang Kaji 30 Soalan
+                    </button>
+                    <button onclick="app.openModal('teacher')" class="btn-navy py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-chalkboard-user text-purple-400"></i> Dashboard Guru
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kanan: Pratonton 5 Misi & Peringkat Cabaran -->
+            <div class="lg:col-span-5 space-y-3 arena-panel-gold p-5 sm:p-6 rounded-2xl">
+                <div class="flex items-center justify-between border-b border-gold-500/30 pb-3">
+                    <div>
+                        <h3 class="font-cinzel font-bold text-base sm:text-lg text-gold-300">PETA 5 MISI BAB 10</h3>
+                        <p class="text-xs text-slate-400">Lengkapkan semua misi untuk gelaran Grandmaster Sejarah</p>
+                    </div>
+                    <span id="home-badges-count" class="px-2.5 py-1 rounded-lg bg-gold-500/20 border border-gold-500/40 text-gold-300 text-xs font-bold">
+                        0 / 5 Lencana
+                    </span>
+                </div>
+
+                <!-- Senarai 5 Misi -->
+                <div id="home-mission-list" class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+                    <!-- Dijana secara dinamik oleh JS -->
+                </div>
+
+                <div class="bg-navy-950/90 border border-electric-500/30 rounded-xl p-3 flex items-center gap-3 text-xs">
+                    <div class="w-9 h-9 rounded-lg bg-electric-500/20 border border-electric-500/40 flex items-center justify-center text-electric-400 shrink-0">
+                        <i class="fa-solid fa-lightbulb text-base"></i>
+                    </div>
+                    <p class="text-slate-300 leading-relaxed">
+                        <strong>Tip Pantas:</strong> Seret tetikus atau jari pada papan catur 3D untuk memutar kamera 360°. Jawab betul untuk mengumpul <strong>Chess Power Point (CPP)</strong>!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SKRIN ARENA PERMAINAN (GAME ARENA: KIRI CATUR 3D, KANAN KUIZ & KAWALAN) -->
+        <section id="screen-game" class="hidden flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 h-full">
+            
+            <!-- BAHAGIAN KIRI: PAPAN CATUR 3D INTERAKTIF (7 KOLUM) -->
+            <div class="lg:col-span-7 flex flex-col arena-panel rounded-2xl overflow-hidden relative min-h-[380px] sm:min-h-[480px] lg:min-h-0">
+                
+                <!-- Bar Status Papan Catur Atas -->
+                <div class="bg-navy-950/90 border-b border-gold-500/30 px-3 py-2 flex flex-wrap items-center justify-between gap-2 z-10">
+                    <!-- Pasukan Putih (Malaysia) -->
+                    <div id="turn-box-w" class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-navy-800 border border-gold-400 active-turn-glow">
+                        <span class="w-3 h-3 rounded-full bg-white inline-block shadow"></span>
+                        <div>
+                            <div id="label-white-name" class="text-[11px] font-bold text-white leading-none">PASUKAN MALAYSIA</div>
+                            <div class="text-[9px] text-gold-300">WHITE TEAM</div>
+                        </div>
+                    </div>
+
+                    <!-- Status Tengah (Giliran / Check) -->
+                    <div class="text-center">
+                        <div id="chess-status-banner" class="text-xs sm:text-sm font-extrabold text-electric-400 tracking-wide uppercase">
+                            GILIRAN PUTIH: JAWAB SOALAN DAHULU
+                        </div>
+                        <div id="chess-sub-banner" class="text-[10px] text-slate-400">
+                            Klik buah catur selepas menjawab soalan dengan betul
+                        </div>
+                    </div>
+
+                    <!-- Pasukan Hitam (Cabaran) -->
+                    <div id="turn-box-b" class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-navy-900 border border-slate-700">
+                        <span class="w-3 h-3 rounded-full bg-slate-950 border border-gold-500 inline-block"></span>
+                        <div class="text-right">
+                            <div id="label-black-name" class="text-[11px] font-bold text-slate-200 leading-none">PASUKAN CABARAN (AI)</div>
+                            <div class="text-[9px] text-slate-400">BLACK TEAM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bekas Kanvas Three.js -->
+                <div id="canvas-container" class="flex-1 relative">
+                    <!-- Overlay Kunci Papan apabila perlu jawab kuiz -->
+                    <div id="board-lock-badge" class="absolute top-3 left-3 z-10 bg-navy-950/90 border border-gold-500/60 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs shadow-lg pointer-events-none">
+                        <i id="board-lock-icon" class="fa-solid fa-lock text-gold-400"></i>
+                        <span id="board-lock-text" class="font-semibold text-gold-200">Kunci Pergerakan: Selesaikan Soalan Sejarah</span>
+                    </div>
+
+                    <!-- Kawalan Kamera Pantas di atas Kanvas -->
+                    <div class="absolute top-3 right-3 z-10 flex flex-col gap-1.5">
+                        <button onclick="chess3D.resetCamera('white')" class="btn-navy w-8 h-8 rounded-lg flex items-center justify-center text-xs shadow" title="Pandangan Putih">
+                            <i class="fa-solid fa-chess-king text-white"></i>
+                        </button>
+                        <button onclick="chess3D.resetCamera('top')" class="btn-navy w-8 h-8 rounded-lg flex items-center justify-center text-xs shadow" title="Pandangan Atas 2D/3D">
+                            <i class="fa-solid fa-border-all text-electric-400"></i>
+                        </button>
+                        <button onclick="chess3D.resetCamera('black')" class="btn-navy w-8 h-8 rounded-lg flex items-center justify-center text-xs shadow" title="Pandangan Hitam">
+                            <i class="fa-solid fa-chess-king text-gold-400"></i>
+                        </button>
+                    </div>
+
+                    <!-- Makluman Ganjaran / Animasi Terapung -->
+                    <div id="floating-reward" class="hidden absolute inset-x-0 top-14 z-20 flex justify-center pointer-events-none">
+                        <div class="bg-gradient-to-r from-gold-500 to-amber-600 text-navy-950 font-extrabold px-4 py-2 rounded-full shadow-2xl border-2 border-white flex items-center gap-2 text-xs sm:text-sm animate-bounce">
+                            <i class="fa-solid fa-unlock-keyhole"></i>
+                            <span id="floating-reward-text">+10 MATA! SILA GERAKKAN BUAH CATUR ANDA!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bar Bawah Papan: Buah Ditangkap & Log Pergerakan -->
+                <div class="bg-navy-950/95 border-t border-slate-800 px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400 text-[11px]">Tangkapan:</span>
+                        <div id="captured-by-white" class="flex items-center gap-0.5 text-gold-400 text-sm min-h-[20px]"></div>
+                        <span class="text-slate-600">|</span>
+                        <div id="captured-by-black" class="flex items-center gap-0.5 text-slate-300 text-sm min-h-[20px]"></div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-slate-400">Log Terakhir:</span>
+                        <span id="last-move-notation" class="px-2 py-0.5 rounded bg-navy-800 border border-slate-700 font-mono text-electric-400 text-xs">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAHAGIAN KANAN: PANEL SOALAN OBJEKTIF SEJARAH & STATISTIK (5 KOLUM) -->
+            <div class="lg:col-span-5 flex flex-col gap-3">
+                
+                <!-- Panel Kuiz & Cabaran Sejarah -->
+                <div id="quiz-panel-container" class="arena-panel-gold rounded-2xl p-4 sm:p-5 flex-1 flex flex-col justify-between relative overflow-hidden">
+                    
+                    <!-- Pengepala Kuiz: Misi, Tahap Buah Catur & Pemasa 30 Saat -->
+                    <div>
+                        <div class="flex items-center justify-between gap-2 border-b border-gold-500/30 pb-2.5 mb-3">
+                            <div class="flex items-center gap-2">
+                                <div id="quiz-piece-badge" class="w-9 h-9 rounded-xl bg-gold-500/20 border border-gold-400 flex items-center justify-center text-gold-300 text-lg">
+                                    <i class="fa-solid fa-chess-pawn"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span id="quiz-mission-tag" class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-electric-500/20 text-electric-400 border border-electric-500/30">MISI 1</span>
+                                        <span id="quiz-remedial-tag" class="hidden text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400">SOALAN PEMULIHAN</span>
+                                    </div>
+                                    <h3 id="quiz-stage-title" class="text-xs sm:text-sm font-bold text-white mt-0.5">Tahap 1 – Pawn Challenge</h3>
+                                </div>
+                            </div>
+
+                            <!-- Pemasa 30 Saat -->
+                            <div class="flex items-center gap-2 bg-navy-950 px-3 py-1.5 rounded-xl border border-gold-500/40">
+                                <i class="fa-solid fa-stopwatch text-electric-400 animate-pulse"></i>
+                                <div class="text-right">
+                                    <div class="text-[9px] text-slate-400 uppercase leading-none">Masa</div>
+                                    <div id="quiz-timer-text" class="text-sm sm:text-base font-extrabold font-mono text-gold-300 leading-tight">30s</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bar Pemasa Visual -->
+                        <div class="w-full bg-navy-950 h-1.5 rounded-full overflow-hidden mb-3 border border-slate-800">
+                            <div id="quiz-timer-bar" class="bg-gradient-to-r from-emerald-400 via-electric-400 to-gold-400 h-full transition-all duration-1000" style="width: 100%"></div>
+                        </div>
+
+                        <!-- Teks Soalan -->
+                        <div id="quiz-active-area" class="space-y-3">
+                            <div class="bg-navy-950/90 border border-gold-500/30 rounded-xl p-3.5 shadow-inner">
+                                <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+                                    <span id="quiz-topic-label">Bab 10.1: Malaysia dalam Isu Global Kontemporari</span>
+                                    <span id="quiz-number-label" class="font-bold text-gold-400">Soalan #1</span>
+                                </div>
+                                <p id="quiz-question-text" class="text-xs sm:text-sm md:text-base font-semibold text-white leading-relaxed">
+                                    Memuatkan soalan cabaran Sejarah...
+                                </p>
+                            </div>
+
+                            <!-- Kotak Petunjuk (Jika Diaktifkan) -->
+                            <div id="quiz-hint-box" class="hidden bg-electric-500/15 border border-electric-400/50 rounded-xl p-2.5 text-xs text-electric-300 flex items-start gap-2">
+                                <i class="fa-solid fa-lightbulb text-gold-400 mt-0.5"></i>
+                                <span id="quiz-hint-text"></span>
+                            </div>
+
+                            <!-- Pilihan Jawapan A, B, C, D -->
+                            <div id="quiz-options-grid" class="grid grid-cols-1 gap-2">
+                                <!-- Dijana secara dinamik -->
+                            </div>
+                        </div>
+
+                        <!-- Kotak Maklum Balas Jawapan & Penerangan -->
+                        <div id="quiz-feedback-area" class="hidden mt-3 bg-navy-950/95 border rounded-xl p-3.5 space-y-2.5">
+                            <div class="flex items-center gap-2">
+                                <div id="feedback-icon" class="w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold"></div>
+                                <h4 id="feedback-title" class="font-bold text-xs sm:text-sm"></h4>
+                            </div>
+                            <p id="feedback-explanation" class="text-xs text-slate-300 leading-relaxed bg-navy-900/80 p-2.5 rounded-lg border border-slate-800"></p>
+                            <div id="feedback-actions" class="pt-1 flex flex-wrap gap-2">
+                                <!-- Butang tindakan selepas jawab -->
+                            </div>
+                        </div>
+
+                        <!-- Mod Catur Klasik (Apabila kuiz dimatikan dalam Mod 1) -->
+                        <div id="classic-mode-notice" class="hidden space-y-3 py-4 text-center">
+                            <div class="w-14 h-14 rounded-2xl bg-gold-500/20 border border-gold-400 flex items-center justify-center text-gold-300 text-2xl mx-auto">
+                                <i class="fa-solid fa-chess"></i>
+                            </div>
+                            <h4 class="font-cinzel font-bold text-base text-gold-300">MOD 1: CHESS CLASSIC</h4>
+                            <p class="text-xs text-slate-300 max-w-sm mx-auto leading-relaxed">
+                                Anda sedang bermain mod catur bebas tanpa kuiz. Klik mana-mana buah catur Putih untuk melihat petak sah dan mulakan strategi anda!
+                            </p>
+                            <div class="pt-2 flex justify-center gap-2">
+                                <button onclick="app.switchToHistoryMode()" class="btn-gold px-4 py-2 rounded-xl text-xs">
+                                    <i class="fa-solid fa-graduation-cap mr-1"></i> Tukar ke Mod Cabaran Sejarah
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bar Bawah Kuiz: Petunjuk Fakta (Hint) & Cadangan Catur -->
+                    <div class="pt-3 mt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                        <button id="btn-use-hint" onclick="app.useHistoryHint()" class="btn-navy px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5">
+                            <i class="fa-solid fa-wand-magic-sparkles text-gold-400"></i> Petunjuk Fakta (1 CPP)
+                        </button>
+                        <button id="btn-chess-assist" onclick="app.useChessAssist()" class="btn-navy px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5">
+                            <i class="fa-solid fa-chess-knight text-electric-400"></i> Cadangan Gerakan (1 CPP)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Panel Statistik Langsung & Kawalan Bawah -->
+                <div class="arena-panel rounded-2xl p-3.5 space-y-3">
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <div class="bg-navy-950/80 border border-slate-800 rounded-xl p-2">
+                            <div class="text-[10px] text-slate-400">Betul</div>
+                            <div id="stat-correct" class="text-sm sm:text-base font-extrabold text-emerald-400">0</div>
+                        </div>
+                        <div class="bg-navy-950/80 border border-slate-800 rounded-xl p-2">
+                            <div class="text-[10px] text-slate-400">Salah</div>
+                            <div id="stat-wrong" class="text-sm sm:text-base font-extrabold text-rose-400">0</div>
+                        </div>
+                        <div class="bg-navy-950/80 border border-slate-800 rounded-xl p-2">
+                            <div class="text-[10px] text-slate-400">Ketepatan</div>
+                            <div id="stat-accuracy" class="text-sm sm:text-base font-extrabold text-electric-400">0%</div>
+                        </div>
+                        <div class="bg-navy-950/80 border border-slate-800 rounded-xl p-2">
+                            <div class="text-[10px] text-slate-400">Pangkat</div>
+                            <div id="stat-rank" class="text-[11px] sm:text-xs font-bold text-gold-300 truncate">Perantis</div>
+                        </div>
+                    </div>
+
+                    <!-- Bar Butang Kawalan Bawah -->
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="app.openModal('guide')" class="btn-navy py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-circle-info text-electric-400"></i> <span class="hidden sm:inline">Bantuan</span>
+                        </button>
+                        <button onclick="app.togglePause()" id="btn-pause" class="btn-navy py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-pause text-gold-400"></i> <span class="hidden sm:inline">Jeda</span>
+                        </button>
+                        <button onclick="app.resetChessBoardOnly()" class="btn-navy py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5" title="Set Semula Papan Catur Tanpa Hilang Kemajuan Soalan">
+                            <i class="fa-solid fa-rotate-right text-emerald-400"></i> <span class="hidden sm:inline">Reset Papan</span>
+                        </button>
+                        <button onclick="app.showScreen('home')" class="btn-navy py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-house text-rose-400"></i> <span class="hidden sm:inline">Menu</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. SKRIN KEPUTUSAN AKHIR (CHESS HISTORY CHAMPION RESULT) -->
+        <section id="screen-result" class="hidden flex-1 flex items-center justify-center my-auto py-4">
+            <div class="arena-panel-gold max-w-3xl w-full rounded-2xl p-6 sm:p-8 space-y-6 text-center relative overflow-hidden">
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-gold-400 to-amber-600 mx-auto flex items-center justify-center text-navy-950 text-4xl shadow-2xl border-2 border-white">
+                    <i id="result-badge-icon" class="fa-solid fa-crown"></i>
+                </div>
+
+                <div class="space-y-1">
+                    <div class="text-xs font-bold uppercase tracking-widest text-electric-400">LAPORAN RASMI MISI SEJARAH SPM 2026</div>
+                    <h2 class="font-cinzel text-2xl sm:text-4xl font-extrabold gold-gradient-text">CHESS HISTORY CHAMPION RESULT</h2>
+                    <p id="result-award-title" class="text-sm sm:text-base font-bold text-white">GRANDMASTER OF HISTORY</p>
+                </div>
+
+                <!-- Grid Maklumat Keputusan -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left bg-navy-950/90 p-4 rounded-2xl border border-gold-500/30">
+                    <div class="p-2.5 rounded-xl bg-navy-900/70">
+                        <div class="text-[10px] text-slate-400 uppercase">Nama Pemain</div>
+                        <div id="res-player-name" class="text-sm font-bold text-white truncate">Calon SPM</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-navy-900/70">
+                        <div class="text-[10px] text-slate-400 uppercase">Markah Keseluruhan</div>
+                        <div id="res-total-score" class="text-sm font-extrabold text-gold-400">300 / 300</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-navy-900/70">
+                        <div class="text-[10px] text-slate-400 uppercase">Jawapan Betul / Salah</div>
+                        <div id="res-correct-wrong" class="text-sm font-bold text-emerald-400">30 Betul / 0 Salah</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-navy-900/70">
+                        <div class="text-[10px] text-slate-400 uppercase">Peratus Pencapaian</div>
+                        <div id="res-percentage" class="text-sm font-extrabold text-electric-400">100%</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-navy-900/70">
+                        <div class="text-[10px] text-slate-400 uppercase">Masa Keseluruhan</div>
+                        <div id="res-time-spent" class="text-sm font-bold text-slate-200">04m 20s</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-navy-900/70">
+                        <div class="text-[10px] text-slate-400 uppercase">Misi Diselesaikan</div>
+                        <div id="res-missions-done" class="text-sm font-bold text-gold-300">5 / 5 Misi</div>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-navy-900/70 col-span-2">
+                        <div class="text-[10px] text-slate-400 uppercase">Tahap Pencapaian Akhir</div>
+                        <div id="res-final-rank" class="text-sm font-extrabold text-gold-400">Grandmaster of History (Anugerah Tertinggi)</div>
+                    </div>
+                </div>
+
+                <!-- Butang Tindakan Selepas Selesai -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+                    <button onclick="app.restartFullChallenge()" class="btn-gold py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate"></i> MAIN SEMULA
+                    </button>
+                    <button onclick="app.openModal('study')" class="btn-electric py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> SEMAK JAWAPAN
+                    </button>
+                    <button onclick="app.openModal('facts')" class="btn-navy py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-gold-400"></i> ULANG KAJI FAKTA
+                    </button>
+                    <button onclick="app.showScreen('home')" class="btn-navy py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-house"></i> MENU UTAMA
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==========================================
+         MODAL POPUP INTERAKTIF (TIADA ALERT BROWSER)
+         ========================================== -->
+
+    <!-- Modal 1: Pilih Mod & Misi -->
+    <div id="modal-mode" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="arena-panel-gold max-w-2xl w-full rounded-2xl p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-gold-500/30 pb-3">
+                <h3 class="font-cinzel font-bold text-lg text-gold-300"><i class="fa-solid fa-gamepad mr-2"></i>PILIH MOD PERMAINAN & MISI</h3>
+                <button onclick="app.closeModals()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="bg-navy-950/90 border border-gold-500/50 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                    <div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-gold-500/20 text-gold-300">MOD UTAMA (DISYORKAN)</span>
+                        <h4 class="font-bold text-base text-white mt-2">MOD 2: CHESS HISTORY CHALLENGE</h4>
+                        <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                            Jawab 30 soalan objektif Sejarah Bab 10 merentasi 5 Misi sebelum menggerakkan buah catur. Kumpul lencana & gelaran Grandmaster!
+                        </p>
+                    </div>
+                    <button onclick="app.closeModals(); app.startGame('challenge');" class="btn-gold w-full py-2.5 rounded-xl text-xs font-bold">
+                        MULA CABARAN SEJARAH
+                    </button>
+                </div>
+
+                <div class="bg-navy-950/90 border border-electric-500/40 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                    <div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-electric-500/20 text-electric-400">LATIHAN STRATEGI CATUR</span>
+                        <h4 class="font-bold text-base text-white mt-2">MOD 1: CHESS CLASSIC</h4>
+                        <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                            Permainan catur 3D standard menentang komputer AI (Mudah/Sederhana/Sukar) atau 2 Pemain tanpa soalan kuiz.
+                        </p>
+                    </div>
+                    <button onclick="app.closeModals(); app.startGame('classic');" class="btn-electric w-full py-2.5 rounded-xl text-xs font-bold">
+                        MULA CHESS CLASSIC
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-gold-300 mb-2">Lompat Terus ke Misi Pilihan (Kemajuan Kekal Tersimpan):</h4>
+                <div id="modal-mission-selector" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <!-- Dijana oleh JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Ringkasan Tamat Misi (Mission Complete Summary) -->
+    <div id="modal-mission-complete" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="arena-panel-gold max-w-xl w-full rounded-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto text-center">
+            <div class="w-16 h-16 rounded-2xl bg-gold-500/20 border-2 border-gold-400 flex items-center justify-center text-gold-300 text-3xl mx-auto shadow-lg">
+                <i class="fa-solid fa-medal"></i>
+            </div>
+            <div>
+                <span id="mc-badge-earned" class="text-[11px] font-bold uppercase px-3 py-1 rounded-full bg-gold-500/20 text-gold-300 border border-gold-400">MISI SELESAI</span>
+                <h3 id="mc-title" class="font-cinzel font-bold text-xl text-white mt-2">MISSION 01 SELESAI!</h3>
+                <p id="mc-score-line" class="text-xs text-electric-400 font-semibold mt-1">Ketepatan Misi: 6/6 Betul</p>
+            </div>
+
+            <div class="bg-navy-950/90 border border-slate-800 rounded-xl p-4 text-left space-y-2">
+                <div class="text-xs font-bold text-gold-400 uppercase flex items-center gap-1.5">
+                    <i class="fa-solid fa-star"></i> Ringkasan Fakta Penting Bab 10:
+                </div>
+                <ul id="mc-facts-list" class="text-xs text-slate-300 space-y-1.5 list-disc pl-4"></ul>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="app.closeModals()" class="btn-gold flex-1 py-3 rounded-xl text-xs sm:text-sm font-bold">
+                    TERUSKAN KE MISI SETERUSNYA <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Promosi Bidak (Pawn Promotion) -->
+    <div id="modal-promotion" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="arena-panel-gold max-w-sm w-full rounded-2xl p-5 text-center space-y-4">
+            <h3 class="font-cinzel font-bold text-lg text-gold-300">PROMOSI BIDAK (PAWN PROMOTION)</h3>
+            <p class="text-xs text-slate-300">Bidak anda telah tiba di barisan terakhir! Pilih buah catur gantian:</p>
+            <div class="grid grid-cols-2 gap-2.5">
+                <button onclick="chess3D.completePromotion('q')" class="btn-gold py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chess-queen text-lg"></i> Menteri (Queen)
+                </button>
+                <button onclick="chess3D.completePromotion('r')" class="btn-navy py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chess-rook text-lg text-electric-400"></i> Benteng (Rook)
+                </button>
+                <button onclick="chess3D.completePromotion('b')" class="btn-navy py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chess-bishop text-lg text-gold-400"></i> Gajah (Bishop)
+                </button>
+                <button onclick="chess3D.completePromotion('n')" class="btn-navy py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chess-knight text-lg text-emerald-400"></i> Kuda (Knight)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Ulang Kaji 30 Soalan & Semak Jawapan -->
+    <div id="modal-study" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+        <div class="arena-panel-gold max-w-4xl w-full rounded-2xl p-5 sm:p-6 flex flex-col max-h-[90vh]">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gold-500/30 pb-3 mb-4">
+                <div>
+                    <h3 class="font-cinzel font-bold text-base sm:text-lg text-gold-300"><i class="fa-solid fa-book-open-reader mr-2"></i>ULANG KAJI LENGKAP 30 SOALAN SEJARAH BAB 10</h3>
+                    <p class="text-xs text-slate-400">Skema Jawapan Rasmi & Nota Padat Sejarah Tingkatan 5</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <select id="study-filter-mission" onchange="app.renderStudyList(this.value)" class="bg-navy-950 border border-gold-500/40 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                        <option value="all">Semua 5 Misi (30 Soalan)</option>
+                        <option value="1">Misi 1: Isu Global Kontemporari</option>
+                        <option value="2">Misi 2: Ekonomi Antarabangsa</option>
+                        <option value="3">Misi 3: Kemanusiaan & Keamanan</option>
+                        <option value="4">Misi 4: Kelestarian Global</option>
+                        <option value="5">Misi 5: Wawasan Masa Hadapan</option>
+                    </select>
+                    <button onclick="app.closeModals()" class="btn-navy w-8 h-8 rounded-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <div id="study-questions-container" class="flex-1 overflow-y-auto space-y-3 pr-2">
+                <!-- Dijana secara dinamik oleh JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5: Rekod Pencapaian & Lencana -->
+    <div id="modal-records" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="arena-panel-gold max-w-2xl w-full rounded-2xl p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-gold-500/30 pb-3">
+                <h3 class="font-cinzel font-bold text-lg text-gold-300"><i class="fa-solid fa-trophy mr-2"></i>REKOD PENCAPAIAN & ANUGERAH</h3>
+                <button onclick="app.closeModals()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="records-badges-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Dijana oleh JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Panduan Permainan -->
+    <div id="modal-guide" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="arena-panel-gold max-w-2xl w-full rounded-2xl p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-gold-500/30 pb-3">
+                <h3 class="font-cinzel font-bold text-lg text-gold-300"><i class="fa-solid fa-circle-question mr-2"></i>PANDUAN PERMAINAN & PERATURAN</h3>
+                <button onclick="app.closeModals()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <div class="bg-navy-950/80 p-3.5 rounded-xl border border-slate-800">
+                    <h4 class="font-bold text-gold-400 mb-1">1. Mekanisme Utama (Jawab Dahulu, Gerak Kemudian)</h4>
+                    <p>Setiap giliran Pasukan Malaysia (Putih), satu soalan objektif Bab 10 akan dipaparkan dengan masa <strong>30 saat</strong>. Jawapan yang tepat memberikan <strong>+10 Mata</strong>, <strong>+1 Chess Power Point (CPP)</strong>, dan membuka kunci papan catur untuk 1 gerakan sah.</p>
+                </div>
+                <div class="bg-navy-950/80 p-3.5 rounded-xl border border-slate-800">
+                    <h4 class="font-bold text-electric-400 mb-1">2. Sistem Soalan Pemulihan</h4>
+                    <p>Jika anda tersilap menjawab atau masa tamat, penerangan fakta Sejarah akan dipaparkan. Anda diberi peluang menjawab <strong>Soalan Pemulihan</strong> supaya anda tetap dapat menggerakkan buah catur!</p>
+                </div>
+                <div class="bg-navy-950/80 p-3.5 rounded-xl border border-slate-800">
+                    <h4 class="font-bold text-emerald-400 mb-1">3. Kawalan Papan Catur 3D</h4>
+                    <p>Klik pada buah catur Putih untuk melihat petak hijau (gerakan sah) atau petak merah (tangkapan). Klik pada petak sasaran untuk bergerak. Anda juga boleh menyeret tetikus/jari untuk memutar kamera 3D.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 7: Dashboard Guru & Ringkasan Fakta -->
+    <div id="modal-teacher" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="arena-panel-gold max-w-2xl w-full rounded-2xl p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-gold-500/30 pb-3">
+                <h3 class="font-cinzel font-bold text-lg text-gold-300"><i class="fa-solid fa-chalkboard-user mr-2"></i>DASHBOARD GURU & ANALITIK KELAS</h3>
+                <button onclick="app.closeModals()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="bg-navy-950 p-4 rounded-xl border border-slate-800 space-y-2 text-xs">
+                <div class="flex justify-between"><span class="text-slate-400">Guru Pembimbing:</span><span class="font-bold text-gold-300">Cikgu Shawn Christien Fabian</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Sekolah:</span><span class="font-bold text-white">SMK Chinta Mata, Tenom, Sabah</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Modul:</span><span class="font-bold text-electric-400">Sejarah Tingkatan 5 - Bab 10 (KSSM)</span></div>
+            </div>
+            <div id="teacher-mission-breakdown" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- Modal 8: Ulang Kaji Ringkasan Fakta 5 Misi -->
+    <div id="modal-facts" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="arena-panel-gold max-w-2xl w-full rounded-2xl p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-gold-500/30 pb-3">
+                <h3 class="font-cinzel font-bold text-lg text-gold-300"><i class="fa-solid fa-lightbulb mr-2"></i>NOTA PADAT 5 MISI BAB 10</h3>
+                <button onclick="app.closeModals()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="facts-summary-container" class="space-y-3 text-xs"></div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         SKRIP UTAMA: SOALAN SEJARAH, THREE.JS & LOGIK PERMAINAN
+         ========================================== -->
+    <script>
+        /**
+         * PANGKALAN DATA 30 SOALAN OBJEKTIF SEJARAH TINGKATAN 5 BAB 10
+         * Disemak mengikut fakta tepat Buku Teks Sejarah Tingkatan 5 KSSM
+         */
+        const MISSIONS_METADATA = [
+            {
+                id: 1,
+                code: "MISSION 01: GLOBAL CRISIS",
+                title: "Malaysia dalam Isu Global Kontemporari",
+                stageName: "Tahap 1 – Pawn Challenge",
+                pieceIcon: "fa-chess-pawn",
+                range: [1, 6],
+                facts: [
+                    "Penyalahgunaan dadah diisytiharkan sebagai musuh utama negara; Malaysia bekerjasama dengan INTERPOL dan IDEC.",
+                    "Isu tuntutan sempadan Pulau Batu Putih, Pulau Sipadan dan Ligitan diselesaikan secara diplomasi melalui Mahkamah Antarabangsa (ICJ).",
+                    "Kempen antiminyak sawit oleh negara maju dan NGO Barat ditangani secara berhemah melalui MPOC dan pensijilan MSPO.",
+                    "Malaysia menggubal ATIPSOM 2007 untuk membanteras jenayah pemerdagangan orang dan melindungi mangsa.",
+                    "Kerjasama kesihatan sejagat diperkukuh bersama WHO dalam menangani HIV/AIDS (" + "Zero New Infections" + ") dan pandemik COVID-19."
+                ]
+            },
+            {
+                id: 2,
+                code: "MISSION 02: ECONOMIC DOMINANCE",
+                title: "Peranan Malaysia dalam Hubungan Ekonomi Antarabangsa",
+                stageName: "Tahap 2 – Knight Challenge",
+                pieceIcon: "fa-chess-knight",
+                range: [7, 12],
+                facts: [
+                    "Malaysia mempelopori AFTA (Kawasan Perdagangan Bebas ASEAN) pada 1992 untuk mengurangkan tarif dan meningkatkan daya saing.",
+                    "Pembangunan ekonomi serantau dipergiat melalui IMT-GT (Indonesia-Malaysia-Thailand), IMS-GT dan BIMP-EAGA.",
+                    "Semasa Krisis Kewangan Asia 1997–1998, Malaysia menolak pakej pinjaman IMF dan menambat nilai Ringgit pada RM3.80 bagi setiap USD 1.",
+                    "Malaysia muncul sebagai hab kewangan Islam global melalui penubuhan INCEIF dan kedudukan utama dalam pasaran Sukuk dunia."
+                ]
+            },
+            {
+                id: 3,
+                code: "MISSION 03: HUMANITARIAN HEROES",
+                title: "Pelibatan Rakyat dalam Isu Kemanusiaan dan Keamanan",
+                stageName: "Tahap 3 – Rook Challenge",
+                pieceIcon: "fa-chess-rook",
+                range: [13, 18],
+                facts: [
+                    "NGO Malaysia yang aktif membantu Palestin termasuk Aman Palestin, Cinta Gaza Malaysia (CGM), MAPIM dan Muslim Care Malaysia.",
+                    "Sukarelawan Malaysia menyertai misi Freedom Flotilla (kapal Mavi Marmara 2010) dan Zaytouna-Oliva untuk memecahkan sekatan ke atas Gaza.",
+                    "Dalam isu Syria, NGO seperti Cinta Syria Malaysia (CSM), Global Peace Mission (GPM) dan MyCARE menyalurkan bantuan makanan serta pendidikan.",
+                    "MERCY Malaysia (ditubuhkan oleh Tan Sri Dr. Jemilah Mahmood) dan ABIM membina sekolah serta pusat kesihatan pascatsunami di Aceh dan Sri Lanka."
+                ]
+            },
+            {
+                id: 4,
+                code: "MISSION 04: GLOBAL SUSTAINABILITY",
+                title: "Usaha Mengekalkan Kelestarian Global",
+                stageName: "Tahap 4 – Queen Challenge",
+                pieceIcon: "fa-chess-queen",
+                range: [19, 24],
+                facts: [
+                    "Deklarasi Langkawi (1989) merupakan komitmen negara-negara Komanwel menangani isu kesan rumah hijau, penipisan ozon dan pencemaran.",
+                    "Malaysia menyertai Sidang Kemuncak Bumi di Rio de Janeiro (1992) yang menghasilkan Agenda 21 serta menerima pakai Protokol Kyoto (1997).",
+                    "Dasar Teknologi Hijau Negara (2009) menggalakkan penggunaan tenaga boleh baharu dan pembangunan mesra alam.",
+                    "Malaysia menegaskan bahawa Antartika ialah Warisan Bersama Untuk Faedah Bersama umat manusia dan menubuhkan YPASM."
+                ]
+            },
+            {
+                id: 5,
+                code: "MISSION 05: FUTURE VISION",
+                title: "Wawasan Malaysia Menuju Masa Hadapan",
+                stageName: "Tahap 5 – Grandmaster Challenge",
+                pieceIcon: "fa-chess-king",
+                range: [25, 30],
+                facts: [
+                    "Komuniti ASEAN (2015) berdiri atas tiga tunggak: Komuniti Politik-Keselamatan, Komuniti Ekonomi dan Komuniti Sosiobudaya.",
+                    "ZOPFAN (Deklarasi Kuala Lumpur 1971) dan SEANWFZ (1995) memastikan Asia Tenggara kekal aman, bebas, berkecuali dan bebas senjata nuklear.",
+                    "SUHAKAM ditubuhkan pada 1999 bagi memelihara dan memajukan hak asasi manusia di Malaysia.",
+                    "Wawasan Kemakmuran Bersama 2030 (WKB 2030) bermatlamat merapatkan jurang ekonomi dan memastikan pembangunan mampan untuk semua rakyat."
+                ]
+            }
+        ];
+
+        const QUESTIONS_BANK = [
+            // MISI 1 (Soalan 1 - 6)
+            {
+                id: 1,
+                mission: 1,
+                question: "Apakah forum kerjasama antarabangsa yang disertai oleh Malaysia bagi menyelaras strategi membanteras pengedaran dadah di peringkat global?",
+                options: [
+                    "Persidangan Penguatkuasaan Dadah Antarabangsa (IDEC)",
+                    "Kawasan Perdagangan Bebas ASEAN (AFTA)",
+                    "Mahkamah Jenayah Antarabangsa (ICC)",
+                    "Pertubuhan Perdagangan Dunia (WTO)"
+                ],
+                correctIndex: 0,
+                hint: "Forum ini ditubuhkan oleh Amerika Syarikat dan menghimpunkan agensi penguatkuasaan dadah dunia.",
+                explanation: "Malaysia menyertai International Drug Enforcement Conference (IDEC) serta bekerjasama rapat dengan INTERPOL untuk memerangi penyeludupan dadah antarabangsa."
+            },
+            {
+                id: 2,
+                mission: 1,
+                question: "Pada tahun 2002, Mahkamah Antarabangsa (ICJ) telah memutuskan hak milik Pulau Sipadan dan Ligitan kepada Malaysia. Apakah kepentingan keputusan tersebut?",
+                options: [
+                    "Membuktikan keberkesanan penyelesaian pertikaian sempadan melalui saluran diplomasi dan undang-undang antarabangsa",
+                    "Membolehkan Malaysia mengenakan cukai pelabuhan ke atas semua kapal dagang di Laut Sulawesi",
+                    "Menamatkan semua kerjasama ketenteraan dengan negara jiran di Asia Tenggara",
+                    "Memberikan kuasa mutlak kepada Malaysia untuk menutup laluan Selat Melaka"
+                ],
+                correctIndex: 0,
+                hint: "Fikirkan pendekatan aman Malaysia dalam menyelesaikan isu pertindihan sempadan.",
+                explanation: "Penyelesaian isu Pulau Sipadan, Ligitan dan Pulau Batu Putih melalui ICJ membuktikan komitmen Malaysia terhadap prinsip diplomasi dan keluhuran undang-undang antarabangsa."
+            },
+            {
+                id: 3,
+                mission: 1,
+                question: "Mengapakah Persatuan Pengeluar Minyak Sawit (ASNGO) di negara Barat dan Kesatuan Eropah melancarkan kempen antiminyak sawit terhadap Malaysia?",
+                options: [
+                    "Minyak sawit menjadi pesaing utama kepada minyak kacang soya dan bunga matahari serta didakwa menjejaskan alam sekitar",
+                    "Malaysia enggan mengeksport minyak sawit mentah ke pasaran Amerika Utara",
+                    "Kualiti minyak sawit tempatan tidak mempunyai sebarang piawaian keselamatan makanan",
+                    "Harga minyak sawit Malaysia terlalu mahal berbanding minyak zaitun Eropah"
+                ],
+                correctIndex: 0,
+                hint: "Kempen ini didorong oleh persaingan pasaran minyak sayuran dan dakwaan penebangan hutan.",
+                explanation: "Pengeluar minyak kacang soya di Barat bimbang terhadap persaingan harga minyak sawit yang kompetitif lalu membangkitkan isu pencemaran dan kemusnahan habitat orang utan."
+            },
+            {
+                id: 4,
+                mission: 1,
+                question: "Apakah langkah proaktif kerajaan Malaysia bagi menangani kempen antiminyak sawit secara berterusan di peringkat antarabangsa?",
+                options: [
+                    "Melaksanakan pensijilan Minyak Sawit Mampan Malaysia (MSPO) dan kempen penerangan melalui MPOC",
+                    "Menghentikan semua aktiviti penanaman kelapa sawit di Semenanjung Malaysia",
+                    "Menukar kesemua ladang kelapa sawit kepada tanaman getah secara mandatori",
+                    "Memboikot semua barangan pengguna yang diimport dari benua Eropah"
+                ],
+                correctIndex: 0,
+                hint: "Langkah ini melibatkan amalan pertanian baik (GAP) dan pensijilan mampan.",
+                explanation: "Melalui Majlis Minyak Sawit Malaysia (MPOC) dan pelaksanaan pensijilan MSPO, Malaysia membuktikan pengeluaran minyak sawit negara adalah mampan dan mesra alam."
+            },
+            {
+                id: 5,
+                mission: 1,
+                question: "Bagi membanteras jenayah pemerdagangan orang dan penyeludupan migran, Malaysia telah menguatkuasakan undang-undang khusus iaitu:",
+                options: [
+                    "Akta Antipemerdagangan Orang dan Antipenyeludupan Migran 2007 (ATIPSOM)",
+                    "Akta Keselamatan Dalam Negeri 1960 (ISA)",
+                    "Ordinan Darurat (Ketenteraman Awam dan Mencegah Jenayah) 1969",
+                    "Akta Suruhanjaya Hak Asasi Manusia Malaysia 1999"
+                ],
+                correctIndex: 0,
+                hint: "Akta ini digubal pada tahun 2007 selaras dengan penubuhan MAPO.",
+                explanation: "ATIPSOM 2007 bersama Majlis Antipemerdagangan Orang dan Antipenyeludupan Migran (MAPO) diwujudkan untuk menguatkuasakan undang-undang serta memberi perlindungan kepada mangsa."
+            },
+            {
+                id: 6,
+                mission: 1,
+                question: "Apakah sasaran Pelan Strategik Kebangsaan Mengakhiri AIDS (NSPEA) yang dilaksanakan oleh Kementerian Kesihatan Malaysia menjelang tahun 2030?",
+                options: [
+                    "Mencapai Sifar Jangkitan Baharu, Sifar Diskriminasi dan Sifar Kematian berkaitan AIDS",
+                    "Menutup semua hospital kerajaan bagi pesakit penyakit berjangkit",
+                    "Mewajibkan saringan darah setiap bulan kepada semua pelancong asing",
+                    "Menyerahkan pengurusan hospital tempatan sepenuhnya kepada pihak swasta"
+                ],
+                correctIndex: 0,
+                hint: "Prinsip tiga sifar (Three Zeros) yang disokong oleh WHO.",
+                explanation: "Malaysia menyokong hasrat Pertubuhan Kesihatan Sedunia (WHO) melalui sasaran 'Three Zeros': Sifar Jangkitan Baharu, Sifar Diskriminasi dan Sifar Kematian berkaitan AIDS menjelang 2030."
+            },
+
+            // MISI 2 (Soalan 7 - 12)
+            {
+                id: 7,
+                mission: 2,
+                question: "Apakah matlamat utama penubuhan Kawasan Perdagangan Bebas ASEAN (AFTA) yang dipersetujui pada tahun 1992?",
+                options: [
+                    "Mengurangkan tarif dan cukai perdagangan antara negara anggota ASEAN bagi meningkatkan daya saing ekonomi serantau",
+                    "Memperkenalkan satu mata wang tunggal bagi menggantikan semua mata wang negara ASEAN",
+                    "Menyekat kemasukan pelabur asing dari luar rantau Asia Tenggara",
+                    "Menyeragamkan sistem pentadbiran politik semua negara anggota ASEAN"
+                ],
+                correctIndex: 0,
+                hint: "Skim CEPT digunakan dalam perjanjian ini untuk merendahkan tarif barangan.",
+                explanation: "AFTA bertujuan menjadikan kawasan ASEAN sebagai tempat produksi yang kompetitif dengan mengurangkan tarif perdagangan melalui skim CEPT (Common Effective Preferential Tariff)."
+            },
+            {
+                id: 8,
+                mission: 2,
+                question: "Kerjasama pembangunan ekonomi Segi Tiga Pertumbuhan IMT-GT melibatkan gabungan wilayah daripada tiga buah negara iaitu:",
+                options: [
+                    "Indonesia, Malaysia dan Thailand",
+                    "Indonesia, Myanmar dan Timor-Leste",
+                    "India, Malaysia dan Thailand",
+                    "Indonesia, Malaysia dan Singapura"
+                ],
+                correctIndex: 0,
+                hint: "Huruf I-M-T merujuk kepada tiga negara berjiran di sebelah utara Semenanjung Malaysia.",
+                explanation: "IMT-GT merujuk kepada Indonesia–Malaysia–Thailand Growth Triangle yang mempercepat pembangunan ekonomi wilayah serantau seperti pelancongan, pertanian dan infrastruktur."
+            },
+            {
+                id: 9,
+                mission: 2,
+                question: "Bagaimanakah kerajaan Malaysia berjaya menangani Krisis Kewangan Asia pada tahun 1997–1998 tanpa mengikut pelan pinjaman Tabung Kewangan Antarabangsa (IMF)?",
+                options: [
+                    "Menubuhkan Majlis Tindakan Ekonomi Negara (MTEN) dan menambat kadar pertukaran Ringgit pada RM3.80 bagi setiap USD 1.00",
+                    "Meminjam dana kecemasan daripada Bank Pusat Kesatuan Eropah dengan kadar faedah tinggi",
+                    "Menjual semua syarikat berkaitan kerajaan (GLC) kepada pelabur spekulasi mata wang",
+                    "Menaikkan kadar faedah pinjaman bank tempatan sehingga 25 peratus setahun"
+                ],
+                correctIndex: 0,
+                hint: "Malaysia menggunakan pendekatan sendiri termasuk kawalan modal terpilih.",
+                explanation: "Malaysia menolak pakej IMF yang ketat, menubuhkan MTEN serta Danaharta/Danamodal, dan menambat Ringgit pada RM3.80 bagi setiap USD 1 untuk menstabilkan ekonomi negara."
+            },
+            {
+                id: 10,
+                mission: 2,
+                question: "Apakah institusi yang ditubuhkan oleh Bank Negara Malaysia pada tahun 2005 untuk membangunkan modal insan profesional dalam bidang kewangan Islam global?",
+                options: [
+                    "Pusat Pendidikan Kewangan Islam Antarabangsa (INCEIF)",
+                    "Institut Penyelidikan Ekonomi Malaysia (MIER)",
+                    "Lembaga Perkhidmatan Kewangan Labuan (Labuan FSA)",
+                    "Pertubuhan Kerjasama Islam (OIC)"
+                ],
+                correctIndex: 0,
+                hint: "Universiti global pertama khusus untuk pendidikan pascasiswazah kewangan Islam.",
+                explanation: "INCEIF (International Centre for Education in Islamic Finance) ditubuhkan bagi menyokong kedudukan Malaysia sebagai hab perbankan dan pasaran Sukuk (sijil kewangan Islam) utama dunia."
+            },
+            {
+                id: 11,
+                mission: 2,
+                question: "Apakah tujuan Malaysia mengemukakan cadangan kerjasama Perundingan Ekonomi Asia Timur (EAEC) pada tahun 1990?",
+                options: [
+                    "Mewujudkan forum ekonomi bersama antara negara ASEAN dengan negara Asia Timur iaitu China, Jepun dan Korea Selatan",
+                    "Membentuk pakatan ketenteraan di Laut China Selatan bagi menggantikan PBB",
+                    "Menghapuskan peranan ASEAN dalam rundingan perdagangan antarabangsa",
+                    "Menghalang negara Jepun dan Korea Selatan daripada melabur di Asia Tenggara"
+                ],
+                correctIndex: 0,
+                hint: "Konsep ini kemudiannya berkembang menjadi mekanisme ASEAN Campur Tiga (ASEAN+3).",
+                explanation: "Walaupun cadangan EAEC mendapat tentangan awal Amerika Syarikat, ideanya direalisasikan melalui kerjasama ASEAN+3 (ASEAN bersama China, Jepun dan Korea Selatan)."
+            },
+            {
+                id: 12,
+                mission: 2,
+                question: "Antara berikut, manakah kepentingan pengiktirafan antarabangsa terhadap sistem pengurusan dan pensijilan Halal Malaysia (JAKIM)?",
+                options: [
+                    "Menjadikan Malaysia peneraju hab industri halal global yang diyakini oleh pengguna dan pelabur antarabangsa",
+                    "Mengehadkan eksport produk makanan tempatan hanya kepada negara-negara di Timur Tengah",
+                    "Menggantikan semua undang-undang kastam antarabangsa di pelabuhan dunia",
+                    "Mewajibkan syarikat luar negara berpindah ibu pejabat ke Kuala Lumpur"
+                ],
+                correctIndex: 0,
+                hint: "Standard Halal Malaysia diiktiraf tinggi dari segi kualiti, kebersihan dan pematuhan syariah.",
+                explanation: "Standard pensijilan Halal Malaysia diiktiraf di peringkat antarabangsa, sekali gus membuka pasaran luas kepada produk makanan, farmaseutikal dan kosmetik halal tempatan."
+            },
+
+            // MISI 3 (Soalan 13 - 18)
+            {
+                id: 13,
+                mission: 3,
+                question: "Pilih kombinasi tiga pertubuhan bukan kerajaan (NGO) di Malaysia yang aktif menggerakkan bantuan kemanusiaan dan perubatan kepada rakyat Palestin:",
+                options: [
+                    "Aman Palestin, Cinta Gaza Malaysia (CGM) dan Majlis Perundingan Pertubuhan Islam Malaysia (MAPIM)",
+                    "WWF Malaysia, Persatuan Pencinta Alam Malaysia (MNS) dan Sahabat Alam Malaysia",
+                    "Institut Jantung Negara (IJN), PERKESO dan Kumpulan Wang Simpanan Pekerja",
+                    "Gabungan Persatuan-Persatuan Pengguna Malaysia (FOMCA), MTUC dan CUEPACS"
+                ],
+                correctIndex: 0,
+                hint: "Ketiga-tiga NGO ini sering menganjurkan kutipan dana, membina hospital dan menghantar sukarelawan ke Gaza.",
+                explanation: "Berdasarkan Buku Teks Sejarah Tingkatan 5 Bab 10, NGO yang aktif membantu Palestin termasuk Aman Palestin, Cinta Gaza Malaysia (CGM), MAPIM dan Muslim Care Malaysia."
+            },
+            {
+                id: 14,
+                mission: 3,
+                question: "Pada Mei 2010, sukarelawan Malaysia yang menyertai misi kemanusiaan Freedom Flotilla ke Gaza telah berdepan detik cemas apabila:",
+                options: [
+                    "Kapal Mavi Marmara diserang dan ditawan oleh tentera Israel di perairan antarabangsa sehingga menyebabkan 12 rakyat Malaysia ditahan",
+                    "Kapal bantuan mengalami kerosakan enjin di Selat Melaka sebelum sempat berlepas",
+                    "Bantuan makanan dirampas oleh lanun di perairan Lautan Hindi",
+                    "Pertubuhan Bangsa-Bangsa Bersatu membatalkan pasport semua sukarelawan dunia"
+                ],
+                correctIndex: 0,
+                hint: "Peristiwa bersejarah membabitkan kapal Turki 'Mavi Marmara' di Laut Mediterranean.",
+                explanation: "Serangan tentera Israel ke atas kapal Mavi Marmara pada 31 Mei 2010 mengakibatkan sembilan aktivis terbunuh dan 12 sukarelawan Malaysia (termasuk wartawan) ditahan sebelum dibebaskan."
+            },
+            {
+                id: 15,
+                mission: 3,
+                question: "Siapakah tokoh kemanusiaan wanita Malaysia yang menyertai misi pelayaran Women's Boat to Gaza (WBG) menaiki kapal Zaytouna-Oliva pada tahun 2016?",
+                options: [
+                    "Dr. Fauziah Mohd Hasan",
+                    "Tan Sri Dato' Seri Dr. Zeti Akhtar Aziz",
+                    "Datuk Nicol Ann David",
+                    "Datuk Mazlan Othman"
+                ],
+                correctIndex: 0,
+                hint: "Beliau merupakan seorang doktor perubatan dan aktivis MyCARE / Rose2Rose.",
+                explanation: "Dr. Fauziah Mohd Hasan merupakan satu-satunya wakil Malaysia dan Asia dalam pelayaran kapal Zaytouna-Oliva bagi membawa mesej keamanan serta membantah kepungan ke atas Gaza."
+            },
+            {
+                id: 16,
+                mission: 3,
+                question: "Apakah sumbangan penting pertubuhan Cinta Syria Malaysia (CSM) terhadap pelarian kanak-kanak Syria yang berada di Malaysia dan kem pelarian?",
+                options: [
+                    "Menubuhkan 'Sekolah KITA' bagi memastikan kanak-kanak pelarian Syria mendapat akses pendidikan percuma",
+                    "Memberikan kerakyatan tetap secara automatik kepada semua pelarian luar negara",
+                    "Membina pangkalan tentera udara di sempadan Turki-Syria",
+                    "Menawarkan pinjaman perniagaan korporat kepada syarikat perkapalan Syria"
+                ],
+                correctIndex: 0,
+                hint: "Fokus utama CSM ialah bantuan pendidikan kepada anak-anak pelarian Syria.",
+                explanation: "Cinta Syria Malaysia (CSM) menubuhkan Sekolah KITA untuk memberikan pendidikan formal dan sokongan psikososial kepada kanak-kanak pelarian Syria."
+            },
+            {
+                id: 17,
+                mission: 3,
+                question: "Selepas bencana ombak besar Tsunami pada 26 Disember 2004, apakah bentuk bantuan jangka panjang yang dilaksanakan oleh MERCY Malaysia dan ABIM di Aceh, Indonesia?",
+                options: [
+                    "Memberikan bantuan perubatan kecemasan serta membina semula sekolah, rumah anak yatim dan pusat kesihatan",
+                    "Mengambil alih pentadbiran kerajaan tempatan wilayah Aceh selama lima tahun",
+                    "Memindahkan kesemua penduduk Aceh untuk menetap secara kekal di Sabah",
+                    "Mengenakan caj perkhidmatan pembinaan semula infrastruktur kepada mangsa"
+                ],
+                correctIndex: 0,
+                hint: "MERCY Malaysia fokus kepada pemulihan perubatan dan pembinaan semula kemudahan awam.",
+                explanation: "MERCY Malaysia dan ABIM menghantar pasukan perubatan, membina pusat kesihatan komuniti, sekolah serta rumah perlindungan anak yatim bagi membantu pemulihan penduduk Aceh dan Sri Lanka."
+            },
+            {
+                id: 18,
+                mission: 3,
+                question: "Siapakah pengasas MERCY Malaysia yang mengharumkan nama negara apabila dianugerahkan Isa Award for Service to Humanity pada tahun 2013?",
+                options: [
+                    "Tan Sri Dr. Jemilah Mahmood",
+                    "Tan Sri Muhyiddin Yassin",
+                    "Tun Abdullah Ahmad Badawi",
+                    "Tan Sri Razali Ismail"
+                ],
+                correctIndex: 0,
+                hint: "Tokoh doktor perubatan wanita yang menubuhkan MERCY Malaysia pada tahun 1999.",
+                explanation: "Tan Sri Dr. Jemilah Mahmood menubuhkan MERCY Malaysia pada 1999 ketika konflik Kosovo dan menerima pelbagai pengiktirafan antarabangsa atas khidmat kemanusiaan beliau."
+            },
+
+            // MISI 4 (Soalan 19 - 24)
+            {
+                id: 19,
+                mission: 4,
+                question: "Apakah dokumen bersejarah yang diisytiharkan semasa Mesyuarat Ketua-Ketua Negara Komanwel (CHOGM) di Malaysia pada tahun 1989 berkaitan pemeliharaan alam sekitar?",
+                options: [
+                    "Deklarasi Langkawi Mengenai Alam Sekitar",
+                    "Deklarasi Kuala Lumpur 1971 (ZOPFAN)",
+                    "Perjanjian Paris Mengenai Perubahan Iklim",
+                    "Deklarasi Bangkok 1967"
+                ],
+                correctIndex: 0,
+                hint: "Diisytiharkan di pulau pelancongan terkenal di negeri Kedah pada Oktober 1989.",
+                explanation: "Deklarasi Langkawi 1989 membuktikan komitmen Malaysia dan negara-negara Komanwel dalam menangani isu kesan rumah hijau, kerosakan lapisan ozon dan pencemaran alam sekitar."
+            },
+            {
+                id: 20,
+                mission: 4,
+                question: "Penyertaan Malaysia dalam Sidang Kemuncak Bumi PBB di Rio de Janeiro, Brazil pada tahun 1992 telah membawa kepada penerimaan pelan tindakan global yang dikenali sebagai:",
+                options: [
+                    "Agenda 21",
+                    "Wawasan 2020",
+                    "Rancangan Colombo",
+                    "Piagam Atlantik"
+                ],
+                correctIndex: 0,
+                hint: "Pelan tindakan pembangunan mampan memasuki abad ke-21.",
+                explanation: "Agenda 21 merupakan dokumen umum yang penting bagi pengurusan aktiviti manusia dalam meminimumkan kemusnahan alam sekitar dan menggalakkan pembangunan lestari."
+            },
+            {
+                id: 21,
+                mission: 4,
+                question: "Apakah komitmen utama negara-negara yang menandatangani Protokol Kyoto 1997 dan Perjanjian Paris 2015 termasuk Malaysia?",
+                options: [
+                    "Mengurangkan pembebasan gas rumah hijau secara berperingkat bagi mengawal pemanasan global",
+                    "Mengharamkan penggunaan semua jenis kenderaan awam di bandar utama",
+                    "Membina loji tenaga nuklear di setiap daerah menjelang tahun 2025",
+                    "Mengeksport sisa toksik perindustrian ke benua Antartika"
+                ],
+                correctIndex: 0,
+                hint: "Berkait rapat dengan pengurangan pelepasan karbon dioksida dan penggunaan tenaga bersih.",
+                explanation: "Protokol Kyoto 1997 dan Perjanjian Paris 2015 menggesa negara anggota mengurangkan pelepasan gas rumah hijau serta beralih kepada penggunaan tenaga baharu yang mesra alam."
+            },
+            {
+                id: 22,
+                mission: 4,
+                question: "Mengapakah Malaysia membangkitkan isu benua Antartika di pentas Pertubuhan Bangsa-Bangsa Bersatu (PBB) sejak tahun 1982?",
+                options: [
+                    "Mendesak agar Antartika dijadikan 'Warisan Bersama Untuk Faedah Bersama' seluruh umat manusia dan bukan dimonopoli oleh segelintir negara maju",
+                    "Menuntut sebahagian wilayah Antartika untuk dijadikan negeri ke-15 Malaysia",
+                    "Meminta kebenaran membina pelabuhan perdagangan bebas di Kutub Selatan",
+                    "Menjalankan ujian senjata ketenteraan jarak jauh di kawasan ais"
+                ],
+                correctIndex: 0,
+                hint: "Malaysia berpandangan hasil kajian saintifik dan ekologi di Antartika perlu dikongsi secara adil.",
+                explanation: "Malaysia menyifatkan penerokaan Antartika yang dikuasai oleh sebilangan kecil negara menerusi Perjanjian Antartika 1959 sebagai tidak adil, lalu mencadangkan konsep Warisan Bersama."
+            },
+            {
+                id: 23,
+                mission: 4,
+                question: "Bagaimanakah Malaysia membuktikan kesungguhan dalam penyelidikan saintifik terhadap perubahan iklim di kutub?",
+                options: [
+                    "Menubuhkan Pusat Penyelidikan Antartika Kebangsaan (NARC) dan Yayasan Penyelidikan Antartika Sultan Mizan (YPASM)",
+                    "Membeli kapal pemecah ais ketenteraan daripada kuasa besar dunia",
+                    "Menutup semua pusat kaji cuaca di kawasan tropika",
+                    "Membina bandar terapung kekal di Lautan Artik"
+                ],
+                correctIndex: 0,
+                hint: "Penyelidik Malaysia seperti Dr. Haji Omar Abdul Rahman dan saintis tempatan dihantar membuat kajian di sana.",
+                explanation: "Melalui NARC di Universiti Malaya dan YPASM, saintis Malaysia aktif menjalankan penyelidikan perubahan iklim dan biodiversiti di Antartika."
+            },
+            {
+                id: 24,
+                mission: 4,
+                question: "Apakah langkah kerjasama serantau ASEAN bagi menangani masalah jerebu merentas sempadan yang sering menjejaskan kesihatan dan ekonomi rantau ini?",
+                options: [
+                    "Memeterai Perjanjian ASEAN berkaitan Pencemaran Jerebu Merentas Sempadan (2002) berprinsipkan 'ASEAN Tanpa Jerebu'",
+                    "Menghentikan semua penerbangan komersial antara negara anggota secara kekal",
+                    "Menutup sempadan darat dan laut selama enam bulan setiap tahun",
+                    "Mengenakan sekatan ekonomi menyeluruh terhadap sektor pertanian serantau"
+                ],
+                correctIndex: 0,
+                hint: "Perjanjian ini menekankan pencegahan pembakaran terbuka dan pemantauan bersama.",
+                explanation: "Perjanjian ASEAN berkaitan Pencemaran Jerebu Merentas Sempadan mengkoordinasikan langkah pencegahan pembakaran terbuka, pemantauan satelit dan bantuan memadam kebakaran hutan."
+            },
+
+            // MISI 5 (Soalan 25 - 30)
+            {
+                id: 25,
+                mission: 5,
+                question: "Deklarasi Kuala Lumpur pada 27 November 1971 telah melahirkan konsep ZOPFAN. Apakah maksud utama ZOPFAN?",
+                options: [
+                    "Menjadikan Asia Tenggara sebagai Kawasan Aman, Bebas dan Berkecuali daripada campur tangan kuasa besar",
+                    "Menubuhkan pakatan ketenteraan bersenjata bagi menyerang negara luar",
+                    "Membentuk kesatuan politik tunggal yang menghapuskan kedaulatan negara anggota",
+                    "Membenarkan kuasa besar membina pangkalan senjata nuklear di Asia Tenggara"
+                ],
+                correctIndex: 0,
+                hint: "Zone of Peace, Freedom and Neutrality.",
+                explanation: "ZOPFAN bertujuan mengekalkan keamanan dan kestabilan politik di Asia Tenggara dengan mengelakkan campur tangan kuasa-kuasa besar."
+            },
+            {
+                id: 26,
+                mission: 5,
+                question: "Pada tahun 1995, Malaysia bersama negara anggota ASEAN telah menandatangani perjanjian SEANWFZ di Bangkok. Apakah kepentingan perjanjian tersebut?",
+                options: [
+                    "Mengisytiharkan rantau Asia Tenggara sebagai kawasan yang bebas daripada pembangunan, pemilikan dan ujian senjata nuklear",
+                    "Membenarkan setiap negara ASEAN membangunkan lima peluru berpandu nuklear",
+                    "Mewajibkan penggunaan tenaga arang batu sepenuhnya dalam sektor industri",
+                    "Membatalkan semua perjanjian perdagangan bebas dengan negara Eropah"
+                ],
+                correctIndex: 0,
+                hint: "Southeast Asia Nuclear Weapon Free Zone.",
+                explanation: "SEANWFZ (Zon Bebas Senjata Nuklear Asia Tenggara) memastikan keselamatan serantau terpelihara daripada ancaman perlumbaan senjata nuklear kuasa besar."
+            },
+            {
+                id: 27,
+                mission: 5,
+                question: "Penubuhan Komuniti ASEAN pada tahun 2015 di Kuala Lumpur merangkumi tiga tunggak utama iaitu:",
+                options: [
+                    "Komuniti Politik-Keselamatan, Komuniti Ekonomi dan Komuniti Sosiobudaya",
+                    "Komuniti Ketenteraan, Komuniti Mata Wang Tunggal dan Komuniti Pertanian",
+                    "Komuniti Perkapalan, Komuniti Kesihatan dan Komuniti Sukan",
+                    "Komuniti Sains Angkasa, Komuniti Perundangan dan Komuniti Pelancongan"
+                ],
+                correctIndex: 0,
+                hint: "Tiga fokus menyeluruh yang merangkumi keselamatan, ekonomi dan kesejahteraan masyarakat.",
+                explanation: "Visi Komuniti ASEAN 2015 berfokus pada integrasi menyeluruh menerusi Komuniti Politik-Keselamatan (APSC), Komuniti Ekonomi (AEC) dan Komuniti Sosiobudaya (ASCC)."
+            },
+            {
+                id: 28,
+                mission: 5,
+                question: "Apakah peranan utama Suruhanjaya Hak Asasi Manusia Malaysia (SUHAKAM) yang ditubuhkan di bawah Akta 597 pada tahun 1999?",
+                options: [
+                    "Memupuk kesedaran, memberi pendidikan serta melindungi dan memajukan hak asasi manusia di Malaysia selaras Perlembagaan Persekutuan",
+                    "Mengambil alih kuasa Mahkamah Persekutuan dalam menjatuhkan hukuman penjara",
+                    "Menggubal belanjawan tahunan negara bagi pihak Kementerian Kewangan",
+                    "Menguruskan pilihan raya umum di peringkat negeri dan persekutuan"
+                ],
+                correctIndex: 0,
+                hint: "Institusi hak asasi manusia kebangsaan Malaysia.",
+                explanation: "SUHAKAM berperanan menasihati kerajaan, menyiasat aduan pelanggaran hak asasi manusia dan menjalankan program pendidikan hak asasi kepada masyarakat."
+            },
+            {
+                id: 29,
+                mission: 5,
+                question: "Apakah objektif utama Wawasan Kemakmuran Bersama 2030 (WKB 2030) yang diperkenalkan oleh kerajaan Malaysia?",
+                options: [
+                    "Menyediakan taraf hidup yang wajar kepada semua rakyat menjelang 2030 serta merapatkan jurang pendapatan antara kelas, kaum dan wilayah",
+                    "Menumpukan pembangunan ekonomi hanya di kawasan bandar raya Kuala Lumpur",
+                    "Menghapuskan sektor pertanian dan perikanan tradisional secara menyeluruh",
+                    "Menghentikan semua hubungan perdagangan eksport dengan negara membangun"
+                ],
+                correctIndex: 0,
+                hint: "Pembangunan untuk semua (Development for All) dan menangani jurang kekayaan.",
+                explanation: "WKB 2030 ialah iltizam menjadikan Malaysia sebuah negara yang terus membangun secara mampan seiring dengan pengagihan ekonomi yang adil, saksama dan inklusif."
+            },
+            {
+                id: 30,
+                mission: 5,
+                question: "Sebagai generasi muda yang bakal memimpin Malaysia pada masa hadapan, apakah pengajaran terpenting daripada kecemerlangan Malaysia di persada dunia dalam Bab 10?",
+                options: [
+                    "Memupuk semangat cinta akan negara, menguasai ilmu pengetahuan serta mengamalkan sikap prihatin dan diplomasi demi keamanan sejagat",
+                    "Mengasingkan diri daripada sebarang pertubuhan antarabangsa untuk mengelakkan tanggungjawab",
+                    "Mengutamakan keuntungan ekonomi semata-mata walaupun memusnahkan kelestarian alam sekitar",
+                    "Bergantung sepenuhnya kepada bantuan kuasa besar asing dalam menentukan dasar negara"
+                ],
+                correctIndex: 0,
+                hint: "Gabungan nilai patriotisme, kemanusiaan, kelestarian dan kebijaksanaan diplomasi.",
+                explanation: "Kecemerlangan Malaysia di pentas dunia membuktikan bahawa kebijaksanaan diplomasi, keprihatinan kemanusiaan dan pemeliharaan alam sekitar mampu mengangkat martabat negara."
+            }
+        ];
+
+        // SOALAN PEMULIHAN (Digunakan apabila pemain menjawab salah supaya mereka belajar & masih boleh menggerakkan catur)
+        const REMEDIAL_QUESTIONS = [
+            {
+                question: "[Pemulihan] Agensi polis antarabangsa manakah yang bekerjasama dengan PDRM untuk membanteras jenayah rentas sempadan dan dadah?",
+                options: ["INTERPOL", "UNESCO", "UNICEF", "FAO"],
+                correctIndex: 0,
+                explanation: "Malaysia bekerjasama rapat dengan INTERPOL (Polis Antarabangsa) dalam memerangi pengedaran dadah dan jenayah rentas sempadan."
+            },
+            {
+                question: "[Pemulihan] Berapakah kadar tambatan nilai Ringgit Malaysia berbanding USD 1.00 semasa Krisis Kewangan Asia 1997–1998?",
+                options: ["RM3.80", "RM2.50", "RM5.20", "RM1.80"],
+                correctIndex: 0,
+                explanation: "Kerajaan menambat Ringgit pada kadar RM3.80 bagi setiap USD 1.00 untuk menstabilkan mata wang negara daripada serangan spekulator."
+            },
+            {
+                question: "[Pemulihan] Apakah nama kapal utama dalam misi Freedom Flotilla 2010 yang membawa sukarelawan Malaysia ke Gaza?",
+                options: ["Mavi Marmara", "Titanic", "Nautilus", "Mayflower"],
+                correctIndex: 0,
+                explanation: "Kapal Mavi Marmara membawa bantuan kemanusiaan dan 12 sukarelawan Malaysia sebelum diserang oleh tentera Israel."
+            },
+            {
+                question: "[Pemulihan] Deklarasi alam sekitar yang dipersetujui oleh Ketua-Ketua Negara Komanwel (CHOGM) di Malaysia pada tahun 1989 ialah:",
+                options: ["Deklarasi Langkawi", "Deklarasi Kyoto", "Deklarasi Paris", "Deklarasi Manila"],
+                correctIndex: 0,
+                explanation: "Deklarasi Langkawi 1989 merupakan sumbangan besar Malaysia dalam memelihara kelestarian alam sekitar bersama negara Komanwel."
+            },
+            {
+                question: "[Pemulihan] Apakah singkatan bagi Zon Bebas Senjata Nuklear Asia Tenggara yang ditandatangani pada tahun 1995?",
+                options: ["SEANWFZ", "ZOPFAN", "AFTA", "APEC"],
+                correctIndex: 0,
+                explanation: "SEANWFZ (Southeast Asia Nuclear Weapon Free Zone) memastikan rantau Asia Tenggara bebas daripada senjata nuklear."
+            }
+        ];
+
+        /**
+         * ENJIN AUDIO SINTETIK (TONE.JS) - TIADA URL AUDIO LUARAN DIPERLUKAN
+         */
+        class SoundEngine {
+            constructor() {
+                this.enabled = true;
+                this.initialized = false;
+                this.synth = null;
+            }
+
+            async init() {
+                if (this.initialized) return;
+                try {
+                    await Tone.start();
+                    this.synth = new Tone.PolySynth(Tone.Synth).toDestination();
+                    this.synth.volume.value = -8;
+                    this.initialized = true;
+                } catch (e) {
+                    console.warn("Audio belum diaktifkan:", e);
+                }
+            }
+
+            play(type) {
+                if (!this.enabled) return;
+                this.init().then(() => {
+                    if (!this.synth) return;
+                    const now = Tone.now();
+                    try {
+                        if (type === 'correct') {
+                            this.synth.triggerAttackRelease(["C5", "E5", "G5", "C6"], "16n", now);
+                        } else if (type === 'wrong') {
+                            this.synth.triggerAttackRelease(["F3", "B2"], "8n", now);
+                        } else if (type === 'move') {
+                            this.synth.triggerAttackRelease(["G4"], "32n", now);
+                        } else if (type === 'capture') {
+                            this.synth.triggerAttackRelease(["C4", "G4"], "16n", now);
+                        } else if (type === 'check') {
+                            this.synth.triggerAttackRelease(["A4", "E5"], "8n", now);
+                        } else if (type === 'victory') {
+                            this.synth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "8n", now);
+                            setTimeout(() => this.synth.triggerAttackRelease(["E4", "G4", "C5", "E5"], "4n"), 220);
+                        }
+                    } catch (err) {}
+                });
+            }
+        }
+
+        const soundFX = new SoundEngine();
+
+        /**
+         * ENJIN PAPAN & BUAH CATUR 3D (THREE.JS + CHESS.JS)
+         */
+        class Chess3DEngine {
+            constructor() {
+                this.chess = new Chess();
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.raycaster = new THREE.Raycaster();
+                this.mouse = new THREE.Vector2();
+
+                this.squaresGroup = new THREE.Group();
+                this.piecesGroup = new THREE.Group();
+                this.highlightsGroup = new THREE.Group();
+
+                this.squareMeshes = {}; // 'e4' -> Mesh
+                this.pieceMeshes = {};  // 'e4' -> Group
+                this.selectedSquare = null;
+                this.validMovesForSelected = [];
+                this.pendingPromotionMove = null;
+
+                // Kawalan Kamera Orbit Manual
+                this.isDragging = false;
+                this.dragDistance = 0;
+                this.prevMouse = { x: 0, y: 0 };
+                this.spherical = { radius: 13.5, theta: 0, phi: Math.PI / 3.1 };
+
+                // Animasi Pergerakan
+                this.activeAnimations = [];
+                this.assistHighlightMeshes = [];
+            }
+
+            init(containerId) {
+                this.container = document.getElementById(containerId);
+                if (!this.container) return;
+
+                const width = this.container.clientWidth || 700;
+                const height = this.container.clientHeight || 500;
+
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0x050b1a);
+                this.scene.fog = new THREE.FogExp2(0x050b1a, 0.025);
+
+                this.camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
+                this.updateCameraPosition();
+
+                this.renderer = new THREE.WebGLRenderer({ antialias: true });
+                this.renderer.setSize(width, height);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+                // Bersihkan kanvas lama jika ada
+                const oldCanvas = this.container.querySelector('canvas');
+                if (oldCanvas) oldCanvas.remove();
+                this.container.appendChild(this.renderer.domElement);
+
+                this.setupLighting();
+                this.buildBoard3D();
+                this.syncPiecesFromFEN();
+                this.bindEvents();
+
+                window.addEventListener('resize', () => this.onResize());
+                this.animate();
+            }
+
+            setupLighting() {
+                const ambient = new THREE.AmbientLight(0xdbeafe, 0.75);
+                this.scene.add(ambient);
+
+                const mainLight = new THREE.DirectionalLight(0xfffbeb, 1.15);
+                mainLight.position.set(8, 16, 10);
+                mainLight.castShadow = true;
+                mainLight.shadow.mapSize.width = 2048;
+                mainLight.shadow.mapSize.height = 2048;
+                mainLight.shadow.camera.near = 2;
+                mainLight.shadow.camera.far = 35;
+                const d = 6.5;
+                mainLight.shadow.camera.left = -d;
+                mainLight.shadow.camera.right = d;
+                mainLight.shadow.camera.top = d;
+                mainLight.shadow.camera.bottom = -d;
+                this.scene.add(mainLight);
+
+                const rimLight1 = new THREE.PointLight(0x00d2ff, 0.7, 25);
+                rimLight1.position.set(-9, 6, -9);
+                this.scene.add(rimLight1);
+
+                const rimLight2 = new THREE.PointLight(0xd4af37, 0.65, 25);
+                rimLight2.position.set(9, 6, 9);
+                this.scene.add(rimLight2);
+            }
+
+            // Tukar koordinat catur ('e4') kepada koordinat 3D (x, z)
+            squareToCoords(sq) {
+                const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+                const fileIdx = files.indexOf(sq[0]);
+                const rankIdx = parseInt(sq[1], 10) - 1;
+                const x = fileIdx - 3.5;
+                const z = 3.5 - rankIdx;
+                return { x, z };
+            }
+
+            buildBoard3D() {
+                // Bingkai Meja Catur Emas & Navy
+                const baseGeo = new THREE.BoxGeometry(9.4, 0.55, 9.4);
+                const baseMat = new THREE.MeshStandardMaterial({
+                    color: 0x0a1128,
+                    roughness: 0.35,
+                    metalness: 0.45
+                });
+                const baseMesh = new THREE.Mesh(baseGeo, baseMat);
+                baseMesh.position.y = -0.32;
+                baseMesh.receiveShadow = true;
+                this.scene.add(baseMesh);
+
+                // Jalur Sempadan Emas
+                const rimGeo = new THREE.BoxGeometry(8.5, 0.58, 8.5);
+                const rimMat = new THREE.MeshStandardMaterial({
+                    color: 0xd4af37,
+                    roughness: 0.25,
+                    metalness: 0.85
+                });
+                const rimMesh = new THREE.Mesh(rimGeo, rimMat);
+                rimMesh.position.y = -0.31;
+                this.scene.add(rimMesh);
+
+                // Petak 8x8
+                const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+                const sqGeo = new THREE.BoxGeometry(1, 0.15, 1);
+
+                const lightMat = new THREE.MeshStandardMaterial({
+                    color: 0xf1f5f9,
+                    roughness: 0.25,
+                    metalness: 0.1
+                });
+                const darkMat = new THREE.MeshStandardMaterial({
+                    color: 0x1e3a6d,
+                    roughness: 0.3,
+                    metalness: 0.25
+                });
+
+                this.squaresGroup.clear();
+                this.squareMeshes = {};
+
+                for (let r = 0; r < 8; r++) {
+                    for (let f = 0; f < 8; f++) {
+                        const sqName = files[f] + (r + 1);
+                        const isLight = (r + f) % 2 !== 0;
+                        const mesh = new THREE.Mesh(sqGeo, isLight ? lightMat.clone() : darkMat.clone());
+                        const { x, z } = this.squareToCoords(sqName);
+                        mesh.position.set(x, 0, z);
+                        mesh.receiveShadow = true;
+                        mesh.userData = { square: sqName, isLight };
+                        this.squaresGroup.add(mesh);
+                        this.squareMeshes[sqName] = mesh;
+                    }
+                }
+
+                this.scene.add(this.squaresGroup);
+                this.scene.add(this.highlightsGroup);
+                this.scene.add(this.piecesGroup);
+            }
+
+            // Jana Model 3D Buah Catur Lengkap (Raja, Menteri, Benteng, Gajah, Kuda, Bidak)
+            createPieceMesh(type, color) {
+                const group = new THREE.Group();
+
+                const mainMat = color === 'w'
+                    ? new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.2, metalness: 0.18 })
+                    : new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.22, metalness: 0.45 });
+
+                const accentMat = color === 'w'
+                    ? new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.25, metalness: 0.85 })
+                    : new THREE.MeshStandardMaterial({ color: 0x00d2ff, roughness: 0.25, metalness: 0.75 });
+
+                // Tapak semua buah catur
+                const base1 = new THREE.Mesh(new THREE.CylinderGeometry(0.37, 0.41, 0.12, 24), mainMat);
+                base1.position.y = 0.06;
+                const baseRing = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.37, 0.05, 24), accentMat);
+                baseRing.position.y = 0.14;
+                group.add(base1, baseRing);
+
+                if (type === 'p') {
+                    // Bidak (Pawn)
+                    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.30, 0.45, 20), mainMat);
+                    body.position.y = 0.38;
+                    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.035, 12, 24), accentMat);
+                    collar.rotation.x = Math.PI / 2;
+                    collar.position.y = 0.60;
+                    const head = new THREE.Mesh(new THREE.SphereGeometry(0.21, 20, 20), mainMat);
+                    head.position.y = 0.78;
+                    group.add(body, collar, head);
+                } else if (type === 'r') {
+                    // Benteng (Rook)
+                    const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.32, 0.62, 20), mainMat);
+                    tower.position.y = 0.45;
+                    const topHead = new THREE.Mesh(new THREE.CylinderGeometry(0.30, 0.27, 0.18, 16), mainMat);
+                    topHead.position.y = 0.84;
+                    const crownRing = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.31, 0.05, 16), accentMat);
+                    crownRing.position.y = 0.94;
+                    group.add(tower, topHead, crownRing);
+                } else if (type === 'n') {
+                    // Kuda (Knight)
+                    const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.32, 0.32, 20), mainMat);
+                    pedestal.position.y = 0.32;
+                    const neck = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.52, 0.34), mainMat);
+                    neck.position.set(0, 0.66, 0.03);
+                    neck.rotation.x = -0.22;
+                    const snout = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.38, 12), mainMat);
+                    snout.rotation.x = Math.PI / 2.2;
+                    snout.position.set(0, 0.82, 0.20 * (color === 'w' ? -1 : 1));
+                    if (color === 'b') snout.rotation.x = -Math.PI / 2.2;
+                    const mane = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.45, 0.12), accentMat);
+                    mane.position.set(0, 0.72, color === 'w' ? 0.16 : -0.16);
+                    group.add(pedestal, neck, snout, mane);
+                } else if (type === 'b') {
+                    // Gajah (Bishop)
+                    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.31, 0.62, 20), mainMat);
+                    body.position.y = 0.45;
+                    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.035, 12, 24), accentMat);
+                    collar.rotation.x = Math.PI / 2;
+                    collar.position.y = 0.76;
+                    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.22, 20, 20), mainMat);
+                    dome.scale.set(1, 1.35, 1);
+                    dome.position.y = 0.95;
+                    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 12), accentMat);
+                    tip.position.y = 1.24;
+                    group.add(body, collar, dome, tip);
+                } else if (type === 'q') {
+                    // Menteri (Queen)
+                    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.33, 0.75, 24), mainMat);
+                    body.position.y = 0.52;
+                    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.21, 0.04, 12, 24), accentMat);
+                    collar.rotation.x = Math.PI / 2;
+                    collar.position.y = 0.90;
+                    const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.19, 0.22, 16), accentMat);
+                    crown.position.y = 1.03;
+                    const orb = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), mainMat);
+                    orb.position.y = 1.20;
+                    group.add(body, collar, crown, orb);
+                } else if (type === 'k') {
+                    // Raja (King)
+                    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.20, 0.35, 0.82, 24), mainMat);
+                    body.position.y = 0.55;
+                    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.23, 0.045, 12, 24), accentMat);
+                    collar.rotation.x = Math.PI / 2;
+                    collar.position.y = 0.98;
+                    const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.21, 0.22, 16), mainMat);
+                    crown.position.y = 1.12;
+                    const crossV = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.26, 0.08), accentMat);
+                    crossV.position.y = 1.36;
+                    const crossH = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.08, 0.08), accentMat);
+                    crossH.position.y = 1.38;
+                    group.add(body, collar, crown, crossV, crossH);
+                }
+
+                group.traverse(child => {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                    }
+                });
+
+                return group;
+            }
+
+            syncPiecesFromFEN() {
+                this.piecesGroup.clear();
+                this.pieceMeshes = {};
+                const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+                const board = this.chess.board();
+
+                for (let r = 0; r < 8; r++) {
+                    for (let f = 0; f < 8; f++) {
+                        const piece = board[r][f];
+                        if (piece) {
+                            const sqName = files[f] + (8 - r);
+                            const mesh = this.createPieceMesh(piece.type, piece.color);
+                            const { x, z } = this.squareToCoords(sqName);
+                            mesh.position.set(x, 0.08, z);
+                            mesh.userData = { square: sqName, type: piece.type, color: piece.color };
+                            this.piecesGroup.add(mesh);
+                            this.pieceMeshes[sqName] = mesh;
+                        }
+                    }
+                }
+
+                this.clearSelectionAndHighlights();
+                this.highlightKingInCheck();
+                this.updateCapturedPiecesUI();
+            }
+
+            clearSelectionAndHighlights() {
+                this.selectedSquare = null;
+                this.validMovesForSelected = [];
+                this.highlightsGroup.clear();
+            }
+
+            highlightKingInCheck() {
+                if (!this.chess.in_check()) return;
+                const turnColor = this.chess.turn();
+                const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+                const board = this.chess.board();
+                for (let r = 0; r < 8; r++) {
+                    for (let f = 0; f < 8; f++) {
+                        const p = board[r][f];
+                        if (p && p.type === 'k' && p.color === turnColor) {
+                            const sq = files[f] + (8 - r);
+                            const { x, z } = this.squareToCoords(sq);
+                            const ring = new THREE.Mesh(
+                                new THREE.RingGeometry(0.32, 0.48, 24),
+                                new THREE.MeshBasicMaterial({ color: 0xef4444, side: THREE.DoubleSide })
+                            );
+                            ring.rotation.x = -Math.PI / 2;
+                            ring.position.set(x, 0.09, z);
+                            this.highlightsGroup.add(ring);
+                        }
+                    }
+                }
+            }
+
+            showValidMovesForSquare(sq) {
+                this.highlightsGroup.clear();
+                this.highlightKingInCheck();
+
+                // Sorot petak dipilih (Emas)
+                const selCoords = this.squareToCoords(sq);
+                const selPlane = new THREE.Mesh(
+                    new THREE.PlaneGeometry(0.92, 0.92),
+                    new THREE.MeshBasicMaterial({ color: 0xf5c542, transparent: true, opacity: 0.55, side: THREE.DoubleSide })
+                );
+                selPlane.rotation.x = -Math.PI / 2;
+                selPlane.position.set(selCoords.x, 0.085, selCoords.z);
+                this.highlightsGroup.add(selPlane);
+
+                const moves = this.chess.moves({ square: sq, verbose: true });
+                this.validMovesForSelected = moves;
+
+                moves.forEach(m => {
+                    const { x, z } = this.squareToCoords(m.to);
+                    const isCapture = m.flags.includes('c') || m.flags.includes('e');
+                    let marker;
+                    if (isCapture) {
+                        marker = new THREE.Mesh(
+                            new THREE.RingGeometry(0.33, 0.46, 24),
+                            new THREE.MeshBasicMaterial({ color: 0xf43f5e, side: THREE.DoubleSide })
+                        );
+                        marker.rotation.x = -Math.PI / 2;
+                        marker.position.set(x, 0.09, z);
+                    } else {
+                        marker = new THREE.Mesh(
+                            new THREE.CylinderGeometry(0.18, 0.18, 0.04, 20),
+                            new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.85 })
+                        );
+                        marker.position.set(x, 0.09, z);
+                    }
+                    marker.userData = { targetSquare: m.to };
+                    this.highlightsGroup.add(marker);
+                });
+            }
+
+            // Sorot cadangan gerakan (Bantuan CPP)
+            highlightSuggestedMove(fromSq, toSq) {
+                const c1 = this.squareToCoords(fromSq);
+                const c2 = this.squareToCoords(toSq);
+                [c1, c2].forEach(c => {
+                    const ring = new THREE.Mesh(
+                        new THREE.RingGeometry(0.35, 0.48, 24),
+                        new THREE.MeshBasicMaterial({ color: 0x00d2ff, side: THREE.DoubleSide })
+                    );
+                    ring.rotation.x = -Math.PI / 2;
+                    ring.position.set(c.x, 0.095, c.z);
+                    this.highlightsGroup.add(ring);
+                });
+            }
+
+            handleSquareClick(sq) {
+                if (this.chess.game_over()) return;
+
+                // Semak sama ada pemain dibenarkan menggerakkan buah catur
+                if (!app.canPlayerMoveChess()) {
+                    soundFX.play('wrong');
+                    app.flashQuizReminder();
+                    return;
+                }
+
+                // Jika sudah pilih buah catur dan klik pada petak gerakan sah
+                if (this.selectedSquare) {
+                    const chosenMove = this.validMovesForSelected.find(m => m.to === sq);
+                    if (chosenMove) {
+                        // Semak Promosi Bidak
+                        if (chosenMove.flags.includes('p')) {
+                            this.pendingPromotionMove = { from: this.selectedSquare, to: sq };
+                            document.getElementById('modal-promotion').classList.remove('hidden');
+                            return;
+                        }
+                        this.executeMove({ from: this.selectedSquare, to: sq, promotion: 'q' });
+                        return;
+                    }
+                }
+
+                // Pilih buah catur milik giliran semasa
+                const pieceOnSq = this.chess.get(sq);
+                const currentTurn = this.chess.turn();
+                if (pieceOnSq && pieceOnSq.color === currentTurn) {
+                    if (currentTurn === 'b' && app.state.difficulty !== '2p') return; // Giliran AI
+                    this.selectedSquare = sq;
+                    this.showValidMovesForSquare(sq);
+                    soundFX.play('move');
+                } else {
+                    this.clearSelectionAndHighlights();
+                }
+            }
+
+            completePromotion(pieceChar) {
+                document.getElementById('modal-promotion').classList.add('hidden');
+                if (!this.pendingPromotionMove) return;
+                const moveObj = {
+                    from: this.pendingPromotionMove.from,
+                    to: this.pendingPromotionMove.to,
+                    promotion: pieceChar
+                };
+                this.pendingPromotionMove = null;
+                this.executeMove(moveObj);
+            }
+
+            executeMove(moveObj) {
+                const fromCoords = this.squareToCoords(moveObj.from);
+                const toCoords = this.squareToCoords(moveObj.to);
+
+                const result = this.chess.move(moveObj);
+                if (!result) return;
+
+                document.getElementById('last-move-notation').textContent = `${result.color === 'w' ? 'Putih' : 'Hitam'}: ${result.san}`;
+
+                if (this.chess.in_check()) {
+                    soundFX.play('check');
+                } else if (result.captured) {
+                    soundFX.play('capture');
+                } else {
+                    soundFX.play('move');
+                }
+
+                // Animasi lancar buah catur bergerak ke petak baharu
+                const movingMesh = this.pieceMeshes[moveObj.from];
+                if (movingMesh) {
+                    this.activeAnimations.push({
+                        mesh: movingMesh,
+                        startX: fromCoords.x,
+                        startZ: fromCoords.z,
+                        endX: toCoords.x,
+                        endZ: toCoords.z,
+                        startTime: performance.now(),
+                        duration: 280,
+                        onComplete: () => {
+                            this.syncPiecesFromFEN();
+                            app.onAfterChessMove(result);
+                        }
+                    });
+                } else {
+                    this.syncPiecesFromFEN();
+                    app.onAfterChessMove(result);
+                }
+            }
+
+            // AI Komputer (Mudah, Sederhana, Sukar menggunakan penilaian papan & Minimax)
+            makeAIMove(difficulty) {
+                if (this.chess.game_over()) return;
+                const moves = this.chess.moves({ verbose: true });
+                if (moves.length === 0) return;
+
+                let chosenMove = null;
+                const pieceValues = { p: 10, n: 32, b: 33, r: 50, q: 90, k: 900 };
+
+                if (difficulty === 'easy') {
+                    // Mudah: Rawak sepenuhnya
+                    chosenMove = moves[Math.floor(Math.random() * moves.length)];
+                } else if (difficulty === 'medium') {
+                    // Sederhana: Utamakan tangkapan dan check
+                    let bestScore = -9999;
+                    moves.forEach(m => {
+                        let score = Math.random() * 4;
+                        if (m.captured) score += pieceValues[m.captured] * 1.5;
+                        if (m.san.includes('+')) score += 12;
+                        if (score > bestScore) {
+                            bestScore = score;
+                            chosenMove = m;
+                        }
+                    });
+                } else {
+                    // Sukar: Penilaian Minimax 2-Ply
+                    let bestScore = -99999;
+                    moves.forEach(m => {
+                        this.chess.move(m);
+                        let score = -this.evaluateBoardState('w', pieceValues);
+                        // Semak tindak balas terbaik lawan
+                        const oppMoves = this.chess.moves({ verbose: true });
+                        let maxOppReply = 0;
+                        oppMoves.forEach(om => {
+                            if (om.captured) {
+                                maxOppReply = Math.max(maxOppReply, pieceValues[om.captured]);
+                            }
+                        });
+                        score -= maxOppReply * 0.85;
+                        this.chess.undo();
+
+                        score += (Math.random() * 2);
+                        if (score > bestScore) {
+                            bestScore = score;
+                            chosenMove = m;
+                        }
+                    });
+                }
+
+                if (!chosenMove) chosenMove = moves[0];
+                this.executeMove({ from: chosenMove.from, to: chosenMove.to, promotion: 'q' });
+            }
+
+            evaluateBoardState(perspectiveColor, values) {
+                const board = this.chess.board();
+                let total = 0;
+                for (let r = 0; r < 8; r++) {
+                    for (let f = 0; f < 8; f++) {
+                        const p = board[r][f];
+                        if (p) {
+                            const val = values[p.type] || 0;
+                            total += (p.color === perspectiveColor ? val : -val);
+                        }
+                    }
+                }
+                return total;
+            }
+
+            updateCapturedPiecesUI() {
+                const startCounts = { p: 8, n: 2, b: 2, r: 2, q: 1 };
+                const currentW = { p: 0, n: 0, b: 0, r: 0, q: 0 };
+                const currentB = { p: 0, n: 0, b: 0, r: 0, q: 0 };
+
+                const board = this.chess.board();
+                for (let r = 0; r < 8; r++) {
+                    for (let f = 0; f < 8; f++) {
+                        const p = board[r][f];
+                        if (p && p.type !== 'k') {
+                            if (p.color === 'w') currentW[p.type]++;
+                            else currentB[p.type]++;
+                        }
+                    }
+                }
+
+                const icons = {
+                    q: '<i class="fa-solid fa-chess-queen"></i>',
+                    r: '<i class="fa-solid fa-chess-rook"></i>',
+                    b: '<i class="fa-solid fa-chess-bishop"></i>',
+                    n: '<i class="fa-solid fa-chess-knight"></i>',
+                    p: '<i class="fa-solid fa-chess-pawn"></i>'
+                };
+
+                let capByWhiteHTML = '';
+                let capByBlackHTML = '';
+
+                ['q', 'r', 'b', 'n', 'p'].forEach(t => {
+                    const missingBlack = Math.max(0, startCounts[t] - currentB[t]);
+                    for (let i = 0; i < missingBlack; i++) capByWhiteHTML += icons[t];
+
+                    const missingWhite = Math.max(0, startCounts[t] - currentW[t]);
+                    for (let i = 0; i < missingWhite; i++) capByBlackHTML += icons[t];
+                });
+
+                document.getElementById('captured-by-white').innerHTML = capByWhiteHTML || '<span class="text-xs text-slate-600">Tiada</span>';
+                document.getElementById('captured-by-black').innerHTML = capByBlackHTML || '<span class="text-xs text-slate-600">Tiada</span>';
+            }
+
+            updateCameraPosition() {
+                if (!this.camera) return;
+                const { radius, theta, phi } = this.spherical;
+                this.camera.position.x = radius * Math.sin(phi) * Math.sin(theta);
+                this.camera.position.y = radius * Math.cos(phi);
+                this.camera.position.z = radius * Math.sin(phi) * Math.cos(theta);
+                this.camera.lookAt(0, 0, 0);
+            }
+
+            resetCamera(view) {
+                if (view === 'white') {
+                    this.spherical = { radius: 13.2, theta: 0, phi: Math.PI / 3.1 };
+                } else if (view === 'black') {
+                    this.spherical = { radius: 13.2, theta: Math.PI, phi: Math.PI / 3.1 };
+                } else if (view === 'top') {
+                    this.spherical = { radius: 12.5, theta: 0, phi: 0.12 };
+                }
+                this.updateCameraPosition();
+            }
+
+            bindEvents() {
+                const dom = this.renderer.domElement;
+
+                const getPointerPos = (e) => {
+                    if (e.changedTouches && e.changedTouches.length > 0) {
+                        return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+                    }
+                    return { x: e.clientX, y: e.clientY };
+                };
+
+                const onPointerDown = (e) => {
+                    this.isDragging = true;
+                    this.dragDistance = 0;
+                    const pos = getPointerPos(e);
+                    this.prevMouse = { x: pos.x, y: pos.y };
+                };
+
+                const onPointerMove = (e) => {
+                    if (!this.isDragging) return;
+                    const pos = getPointerPos(e);
+                    const dx = pos.x - this.prevMouse.x;
+                    const dy = pos.y - this.prevMouse.y;
+                    this.dragDistance += Math.abs(dx) + Math.abs(dy);
+                    this.prevMouse = { x: pos.x, y: pos.y };
+
+                    if (this.dragDistance > 6) {
+                        this.spherical.theta -= dx * 0.007;
+                        this.spherical.phi = Math.max(0.15, Math.min(Math.PI / 2.25, this.spherical.phi - dy * 0.006));
+                        this.updateCameraPosition();
+                    }
+                };
+
+                const onPointerUp = (e) => {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    if (this.dragDistance < 8) {
+                        const pos = getPointerPos(e);
+                        const rect = dom.getBoundingClientRect();
+                        this.mouse.x = ((pos.x - rect.left) / rect.width) * 2 - 1;
+                        this.mouse.y = -((pos.y - rect.top) / rect.height) * 2 + 1;
+
+                        this.raycaster.setFromCamera(this.mouse, this.camera);
+
+                        // Semak klik pada buah catur atau petak
+                        const pieceHits = this.raycaster.intersectObjects(this.piecesGroup.children, true);
+                        if (pieceHits.length > 0) {
+                            let obj = pieceHits[0].object;
+                            while (obj.parent && obj.parent !== this.piecesGroup) obj = obj.parent;
+                            if (obj.userData && obj.userData.square) {
+                                this.handleSquareClick(obj.userData.square);
+                                return;
+                            }
+                        }
+
+                        const sqHits = this.raycaster.intersectObjects(this.squaresGroup.children, false);
+                        if (sqHits.length > 0) {
+                            const sq = sqHits[0].object.userData.square;
+                            if (sq) this.handleSquareClick(sq);
+                        }
+                    }
+                };
+
+                dom.addEventListener('mousedown', onPointerDown);
+                window.addEventListener('mousemove', onPointerMove);
+                window.addEventListener('mouseup', onPointerUp);
+
+                dom.addEventListener('touchstart', onPointerDown, { passive: true });
+                window.addEventListener('touchmove', onPointerMove, { passive: true });
+                window.addEventListener('touchend', onPointerUp);
+            }
+
+            onResize() {
+                if (!this.container || !this.renderer || !this.camera) return;
+                const width = this.container.clientWidth;
+                const height = this.container.clientHeight;
+                if (width === 0 || height === 0) return;
+                this.camera.aspect = width / height;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(width, height);
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                const now = performance.now();
+                for (let i = this.activeAnimations.length - 1; i >= 0; i--) {
+                    const anim = this.activeAnimations[i];
+                    const t = Math.min(1, (now - anim.startTime) / anim.duration);
+                    const ease = 1 - Math.pow(1 - t, 3);
+                    anim.mesh.position.x = anim.startX + (anim.endX - anim.startX) * ease;
+                    anim.mesh.position.z = anim.startZ + (anim.endZ - anim.startZ) * ease;
+                    anim.mesh.position.y = 0.08 + Math.sin(t * Math.PI) * 0.85; // Lompatan lengkung 3D
+
+                    if (t >= 1) {
+                        this.activeAnimations.splice(i, 1);
+                        if (anim.onComplete) anim.onComplete();
+                    }
+                }
+
+                if (this.renderer && this.scene && this.camera) {
+                    this.renderer.render(this.scene, this.camera);
+                }
+            }
+        }
+
+        const chess3D = new Chess3DEngine();
+
+        /**
+         * PENGAWAL UTAMA APLIKASI & SISTEM GAMIFIKASI SEJARAH
+         */
+        class GameController {
+            constructor() {
+                this.state = {
+                    mode: 'challenge', // 'challenge' atau 'classic'
+                    difficulty: 'medium', // 'easy', 'medium', 'hard', '2p'
+                    player1Name: 'Calon Cemerlang SPM',
+                    score: 0,
+                    cpp: 2, // Chess Power Points
+                    correctCount: 0,
+                    wrongCount: 0,
+                    answeredIds: new Set(),
+                    missionCorrectCounts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+                    currentMissionId: 1,
+                    questionQueue: [],
+                    currentQuestion: null,
+                    isRemedialActive: false,
+                    chessMoveUnlocked: false,
+                    timerSeconds: 30,
+                    timerInterval: null,
+                    isPaused: false,
+                    totalSecondsElapsed: 0,
+                    sessionClockInterval: null,
+                    threeInitialized: false
+                };
+            }
+
+            init() {
+                this.renderHomeMissions();
+                this.renderStudyList('all');
+                this.renderFactsModal();
+                this.updateHeaderStats();
+            }
+
+            setDifficulty(val) {
+                this.state.difficulty = val;
+            }
+
+            toggleSound() {
+                soundFX.enabled = !soundFX.enabled;
+                const btn = document.getElementById('btn-sound-top');
+                btn.innerHTML = soundFX.enabled
+                    ? '<i class="fa-solid fa-volume-high text-electric-400"></i>'
+                    : '<i class="fa-solid fa-volume-xmark text-rose-400"></i>';
+            }
+
+            showScreen(screenName) {
+                ['home', 'game', 'result'].forEach(s => {
+                    document.getElementById(`screen-${s}`).classList.add('hidden');
+                });
+                document.getElementById(`screen-${screenName}`).classList.remove('hidden');
+
+                const topMissionBar = document.getElementById('top-mission-bar');
+                if (screenName === 'game') {
+                    topMissionBar.classList.remove('hidden');
+                    topMissionBar.classList.add('lg:flex');
+                    if (!this.state.threeInitialized) {
+                        chess3D.init('canvas-container');
+                        this.state.threeInitialized = true;
+                    } else {
+                        setTimeout(() => chess3D.onResize(), 60);
+                    }
+                } else {
+                    topMissionBar.classList.add('hidden');
+                    topMissionBar.classList.remove('lg:flex');
+                    this.stopQuestionTimer();
+                }
+
+                if (screenName === 'home') {
+                    this.renderHomeMissions();
+                }
+            }
+
+            // Sediakan urutan soalan yang diacak dalam setiap misi tanpa ulangan
+            buildQuestionQueue(startMissionId = 1) {
+                const queue = [];
+                for (let m = startMissionId; m <= 5; m++) {
+                    const missionQs = QUESTIONS_BANK.filter(q => q.mission === m && !this.state.answeredIds.has(q.id));
+                    // Acak soalan dalam misi tersebut
+                    const shuffled = [...missionQs].sort(() => Math.random() - 0.5);
+                    queue.push(...shuffled);
+                }
+                // Jika ada soalan daripada misi terdahulu yang belum dijawab, tambah di hujung
+                for (let m = 1; m < startMissionId; m++) {
+                    const earlierQs = QUESTIONS_BANK.filter(q => q.mission === m && !this.state.answeredIds.has(q.id));
+                    const shuffled = [...earlierQs].sort(() => Math.random() - 0.5);
+                    queue.push(...shuffled);
+                }
+                this.state.questionQueue = queue;
+            }
+
+            startGame(mode, jumpToMissionId = null) {
+                const pNameInput = document.getElementById('input-player1');
+                if (pNameInput && pNameInput.value.trim()) {
+                    this.state.player1Name = pNameInput.value.trim();
+                }
+                this.state.mode = mode;
+
+                document.getElementById('label-white-name').textContent = `${this.state.player1Name.toUpperCase()} (MALAYSIA)`;
+                document.getElementById('label-black-name').textContent =
+                    this.state.difficulty === '2p' ? 'PEMAIN 2 (CABARAN)' : `KOMPUTER AI (${this.state.difficulty.toUpperCase()})`;
+
+                this.showScreen('game');
+
+                if (!this.state.sessionClockInterval) {
+                    this.state.sessionClockInterval = setInterval(() => {
+                        if (!this.state.isPaused && !document.getElementById('screen-game').classList.contains('hidden')) {
+                            this.state.totalSecondsElapsed++;
+                        }
+                    }, 1000);
+                }
+
+                if (mode === 'classic') {
+                    this.state.chessMoveUnlocked = true;
+                    document.getElementById('quiz-active-area').classList.add('hidden');
+                    document.getElementById('quiz-feedback-area').classList.add('hidden');
+                    document.getElementById('classic-mode-notice').classList.remove('hidden');
+                    this.updateBoardLockUI();
+                } else {
+                    document.getElementById('classic-mode-notice').classList.add('hidden');
+                    if (this.state.answeredIds.size >= 30) {
+                        this.restartFullChallenge();
+                        return;
+                    }
+                    const targetMission = jumpToMissionId || this.state.currentMissionId || 1;
+                    this.state.currentMissionId = targetMission;
+                    this.buildQuestionQueue(targetMission);
+
+                    if (!this.state.chessMoveUnlocked) {
+                        this.loadNextQuestion();
+                    } else {
+                        this.updateBoardLockUI();
+                    }
+                }
+            }
+
+            switchToHistoryMode() {
+                this.startGame('challenge');
+            }
+
+            canPlayerMoveChess() {
+                if (this.state.mode === 'classic') return true;
+                return this.state.chessMoveUnlocked;
+            }
+
+            flashQuizReminder() {
+                const badge = document.getElementById('board-lock-badge');
+                badge.classList.add('scale-105', 'border-rose-500');
+                setTimeout(() => badge.classList.remove('scale-105', 'border-rose-500'), 400);
+            }
+
+            updateBoardLockUI() {
+                const lockBadge = document.getElementById('board-lock-badge');
+                const lockIcon = document.getElementById('board-lock-icon');
+                const lockText = document.getElementById('board-lock-text');
+                const banner = document.getElementById('chess-status-banner');
+                const subBanner = document.getElementById('chess-sub-banner');
+
+                const turn = chess3D.chess.turn();
+                const turnBoxW = document.getElementById('turn-box-w');
+                const turnBoxB = document.getElementById('turn-box-b');
+
+                if (turn === 'w') {
+                    turnBoxW.classList.add('active-turn-glow', 'border-gold-400');
+                    turnBoxB.classList.remove('active-turn-glow', 'border-gold-400');
+                } else {
+                    turnBoxB.classList.add('active-turn-glow', 'border-gold-400');
+                    turnBoxW.classList.remove('active-turn-glow', 'border-gold-400');
+                }
+
+                if (chess3D.chess.game_over()) {
+                    let endMsg = "PERMAINAN CATUR TAMAT";
+                    if (chess3D.chess.in_checkmate()) {
+                        endMsg = turn === 'w' ? "CHECKMATE! PASUKAN CABARAN MENANG" : "CHECKMATE! PASUKAN MALAYSIA MENANG!";
+                    } else if (chess3D.chess.in_draw()) {
+                        endMsg = "PERMAINAN SERI (DRAW)";
+                    }
+                    banner.textContent = endMsg;
+                    subBanner.textContent = "Klik 'Reset Papan' di bawah untuk memulakan perlawanan catur baharu";
+                    return;
+                }
+
+                if (this.state.mode === 'classic' || this.state.chessMoveUnlocked) {
+                    lockBadge.className = "absolute top-3 left-3 z-10 bg-emerald-950/90 border border-emerald-400 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs shadow-lg pointer-events-none";
+                    lockIcon.className = "fa-solid fa-lock-open text-emerald-400";
+                    lockText.textContent = "Papan Catur Aktif: Pilih Buah Catur & Gerakkan";
+                    lockText.className = "font-semibold text-emerald-200";
+
+                    banner.textContent = turn === 'w'
+                        ? (chess3D.chess.in_check() ? "AMARAN CHECK! GERAKKAN BUAH PUTIH" : "GILIRAN PUTIH: SILA GERAKKAN BUAH CATUR")
+                        : (chess3D.chess.in_check() ? "CHECK! GILIRAN HITAM" : "GILIRAN HITAM BERGERAK");
+                    subBanner.textContent = "Klik pada buah catur untuk melihat petak hijau (gerakan sah)";
+                } else {
+                    lockBadge.className = "absolute top-3 left-3 z-10 bg-navy-950/90 border border-gold-500/60 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs shadow-lg pointer-events-none";
+                    lockIcon.className = "fa-solid fa-lock text-gold-400";
+                    lockText.textContent = "Kunci Pergerakan: Selesaikan Soalan Sejarah di Sebelah Kanan";
+                    lockText.className = "font-semibold text-gold-200";
+
+                    banner.textContent = "JAWAB SOALAN SEJARAH UNTUK MEMBUKA GILIRAN";
+                    subBanner.textContent = "Masa menjawab: 30 saat setiap soalan";
+                }
+            }
+
+            loadNextQuestion() {
+                this.stopQuestionTimer();
+                document.getElementById('quiz-hint-box').classList.add('hidden');
+                document.getElementById('quiz-feedback-area').classList.add('hidden');
+                document.getElementById('quiz-active-area').classList.remove('hidden');
+                document.getElementById('quiz-remedial-tag').classList.add('hidden');
+                this.state.isRemedialActive = false;
+
+                if (this.state.answeredIds.size >= 30) {
+                    this.showFinalResults();
+                    return;
+                }
+
+                if (this.state.questionQueue.length === 0) {
+                    this.buildQuestionQueue(1);
+                }
+
+                const nextQ = this.state.questionQueue[0];
+                this.state.currentQuestion = nextQ;
+                this.state.currentMissionId = nextQ.mission;
+
+                this.renderQuestionToUI(nextQ, false);
+                this.startQuestionTimer(30);
+                this.updateBoardLockUI();
+            }
+
+            loadRemedialQuestion() {
+                this.stopQuestionTimer();
+                document.getElementById('quiz-hint-box').classList.add('hidden');
+                document.getElementById('quiz-feedback-area').classList.add('hidden');
+                document.getElementById('quiz-active-area').classList.remove('hidden');
+                document.getElementById('quiz-remedial-tag').classList.remove('hidden');
+                this.state.isRemedialActive = true;
+
+                const remIdx = (this.state.currentMissionId - 1) % REMEDIAL_QUESTIONS.length;
+                const remQ = {
+                    ...REMEDIAL_QUESTIONS[remIdx],
+                    id: 'REM',
+                    mission: this.state.currentMissionId,
+                    hint: "Imbas kembali penerangan fakta sebentar tadi untuk membuka kunci giliran catur anda!"
+                };
+                this.state.currentQuestion = remQ;
+                this.renderQuestionToUI(remQ, true);
+                this.startQuestionTimer(30);
+            }
+
+            renderQuestionToUI(qObj, isRemedial) {
+                const missionMeta = MISSIONS_METADATA.find(m => m.id === qObj.mission) || MISSIONS_METADATA[0];
+
+                // Kemas kini Bar Atas & Pengepala Kuiz
+                document.getElementById('top-mission-name').textContent = missionMeta.code;
+                document.getElementById('top-mission-sub').textContent = `${missionMeta.stageName} • ${missionMeta.title}`;
+                document.getElementById('top-stage-icon').innerHTML = `<i class="fa-solid ${missionMeta.pieceIcon}"></i>`;
+
+                const answeredCount = this.state.answeredIds.size;
+                document.getElementById('top-q-progress').textContent = `${Math.min(30, answeredCount + 1)} / 30`;
+                document.getElementById('top-q-bar').style.width = `${((answeredCount) / 30) * 100}%`;
+
+                document.getElementById('quiz-piece-badge').innerHTML = `<i class="fa-solid ${missionMeta.pieceIcon}"></i>`;
+                document.getElementById('quiz-mission-tag').textContent = `MISI ${missionMeta.id}`;
+                document.getElementById('quiz-stage-title').textContent = missionMeta.stageName;
+                document.getElementById('quiz-topic-label').textContent = missionMeta.title;
+                document.getElementById('quiz-number-label').textContent = isRemedial ? `Pemulihan` : `Soalan #${qObj.id} (${answeredCount + 1}/30)`;
+                document.getElementById('quiz-question-text').textContent = qObj.question;
+
+                // Acak susunan pilihan jawapan A, B, C, D
+                const indexedOptions = qObj.options.map((text, idx) => ({
+                    text,
+                    isCorrect: idx === qObj.correctIndex
+                }));
+                const shuffledOptions = [...indexedOptions].sort(() => Math.random() - 0.5);
+                this.state.currentShuffledOptions = shuffledOptions;
+
+                const letters = ['A', 'B', 'C', 'D'];
+                const grid = document.getElementById('quiz-options-grid');
+                grid.innerHTML = '';
+
+                shuffledOptions.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "btn-navy w-full text-left p-3 rounded-xl flex items-start gap-3 text-xs sm:text-sm transition-all group";
+                    btn.onclick = () => this.submitAnswer(idx);
+                    btn.innerHTML = `
+                        <span class="w-6 h-6 rounded-lg bg-navy-950 border border-gold-500/50 text-gold-300 font-extrabold flex items-center justify-center shrink-0 group-hover:bg-gold-500 group-hover:text-navy-950 transition-colors">${letters[idx]}</span>
+                        <span class="text-slate-100 font-medium leading-snug">${opt.text}</span>
+                    `;
+                    grid.appendChild(btn);
+                });
+            }
+
+            startQuestionTimer(seconds) {
+                this.state.timerSeconds = seconds;
+                this.updateTimerUI();
+                this.state.timerInterval = setInterval(() => {
+                    if (this.state.isPaused) return;
+                    this.state.timerSeconds--;
+                    this.updateTimerUI();
+                    if (this.state.timerSeconds <= 0) {
+                        this.stopQuestionTimer();
+                        this.handleTimeOut();
+                    }
+                }, 1000);
+            }
+
+            stopQuestionTimer() {
+                if (this.state.timerInterval) {
+                    clearInterval(this.state.timerInterval);
+                    this.state.timerInterval = null;
+                }
+            }
+
+            updateTimerUI() {
+                const t = Math.max(0, this.state.timerSeconds);
+                const timerText = document.getElementById('quiz-timer-text');
+                const timerBar = document.getElementById('quiz-timer-bar');
+                timerText.textContent = `${t}s`;
+                timerBar.style.width = `${(t / 30) * 100}%`;
+
+                if (t <= 8) {
+                    timerText.className = "text-sm sm:text-base font-extrabold font-mono text-rose-400 leading-tight animate-ping";
+                } else {
+                    timerText.className = "text-sm sm:text-base font-extrabold font-mono text-gold-300 leading-tight";
+                }
+            }
+
+            submitAnswer(chosenIdx) {
+                this.stopQuestionTimer();
+                const q = this.state.currentQuestion;
+                const chosenOpt = this.state.currentShuffledOptions[chosenIdx];
+                const isCorrect = chosenOpt && chosenOpt.isCorrect;
+
+                // Kunci butang pilihan dan tandakan warna
+                const buttons = document.getElementById('quiz-options-grid').querySelectorAll('button');
+                buttons.forEach((btn, i) => {
+                    btn.disabled = true;
+                    const opt = this.state.currentShuffledOptions[i];
+                    if (opt.isCorrect) {
+                        btn.className = "w-full text-left p-3 rounded-xl flex items-start gap-3 text-xs sm:text-sm bg-emerald-950/90 border-2 border-emerald-400 text-white";
+                    } else if (i === chosenIdx && !isCorrect) {
+                        btn.className = "w-full text-left p-3 rounded-xl flex items-start gap-3 text-xs sm:text-sm bg-rose-950/90 border-2 border-rose-500 text-white";
+                    } else {
+                        btn.classList.add('opacity-50');
+                    }
+                });
+
+                if (!this.state.isRemedialActive) {
+                    // Soalan Utama (Bukan Pemulihan)
+                    this.state.answeredIds.add(q.id);
+                    this.state.questionQueue.shift();
+
+                    if (isCorrect) {
+                        this.state.score += 10;
+                        this.state.cpp += 1;
+                        this.state.correctCount++;
+                        this.state.missionCorrectCounts[q.mission] = (this.state.missionCorrectCounts[q.mission] || 0) + 1;
+                        this.state.chessMoveUnlocked = true;
+                        soundFX.play('correct');
+                        this.showFloatingReward("+10 MATA & +1 CPP! GERAKKAN BUAH CATUR ANDA!");
+                        this.showQuizFeedback(true, "TAHNIAH! JAWAPAN TEPAT (+10 MATA)", q.explanation, false);
+                    } else {
+                        this.state.wrongCount++;
+                        soundFX.play('wrong');
+                        const correctText = q.options[q.correctIndex];
+                        this.showQuizFeedback(
+                            false,
+                            "JAWAPAN KURANG TEPAT (0 MATA)",
+                            `<strong>Jawapan Sebenar:</strong> ${correctText}<br><br>${q.explanation}`,
+                            true
+                        );
+                    }
+                } else {
+                    // Soalan Pemulihan
+                    if (isCorrect) {
+                        this.state.chessMoveUnlocked = true;
+                        soundFX.play('correct');
+                        this.showFloatingReward("PEMULIHAN BERJAYA! SILA GERAKKAN BUAH CATUR!");
+                        this.showQuizFeedback(true, "PEMULIHAN BERJAYA! KUNCI CATUR DIBUKA", q.explanation, false);
+                    } else {
+                        // Beri kebenaran bergerak selepas membaca penjelasan pemulihan supaya aliran permainan tidak tersekat
+                        this.state.chessMoveUnlocked = true;
+                        soundFX.play('wrong');
+                        this.showQuizFeedback(
+                            false,
+                            "SEMAK FAKTA PEMULIHAN",
+                            `${q.explanation}<br><br><em>Giliran catur anda kini dibuka supaya anda boleh meneruskan strategi.</em>`,
+                            false
+                        );
+                    }
+                }
+
+                this.updateHeaderStats();
+                this.updateBoardLockUI();
+                this.checkMissionMilestone(q.mission);
+            }
+
+            handleTimeOut() {
+                const q = this.state.currentQuestion;
+                if (!this.state.isRemedialActive && q) {
+                    this.state.answeredIds.add(q.id);
+                    this.state.questionQueue.shift();
+                    this.state.wrongCount++;
+                }
+                soundFX.play('wrong');
+                const correctText = q.options[q.correctIndex];
+                this.showQuizFeedback(
+                    false,
+                    "MASA 30 SAAT TAMAT!",
+                    `<strong>Jawapan Sebenar:</strong> ${correctText}<br><br>${q.explanation}`,
+                    !this.state.isRemedialActive
+                );
+                this.updateHeaderStats();
+            }
+
+            showQuizFeedback(isSuccess, title, explanationHTML, offerRemedial) {
+                const box = document.getElementById('quiz-feedback-area');
+                const icon = document.getElementById('feedback-icon');
+                const titleEl = document.getElementById('feedback-title');
+                const expEl = document.getElementById('feedback-explanation');
+                const actionsEl = document.getElementById('feedback-actions');
+
+                box.classList.remove('hidden', 'border-emerald-500/60', 'border-rose-500/60');
+                box.classList.add(isSuccess ? 'border-emerald-500/60' : 'border-rose-500/60');
+
+                icon.className = isSuccess
+                    ? "w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold bg-emerald-500 text-navy-950"
+                    : "w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold bg-rose-500 text-white";
+                icon.innerHTML = isSuccess ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-xmark"></i>';
+
+                titleEl.className = isSuccess ? "font-bold text-xs sm:text-sm text-emerald-400" : "font-bold text-xs sm:text-sm text-rose-400";
+                titleEl.textContent = title;
+                expEl.innerHTML = explanationHTML;
+
+                actionsEl.innerHTML = '';
+                if (offerRemedial) {
+                    const remBtn = document.createElement('button');
+                    remBtn.className = "btn-gold px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5";
+                    remBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Jawab Soalan Pemulihan (Buka Gerakan Catur)';
+                    remBtn.onclick = () => this.loadRemedialQuestion();
+                    actionsEl.appendChild(remBtn);
+                } else {
+                    const infoSpan = document.createElement('div');
+                    infoSpan.className = "text-xs font-bold text-electric-400 flex items-center gap-1.5";
+                    infoSpan.innerHTML = '<i class="fa-solid fa-chess-knight animate-bounce"></i> Klik buah catur pada papan 3D di sebelah kiri untuk bergerak!';
+                    actionsEl.appendChild(infoSpan);
+
+                    // Jika kesemua 30 soalan selesai, sediakan butang terus ke Keputusan Akhir
+                    if (this.state.answeredIds.size >= 30) {
+                        const finishBtn = document.createElement('button');
+                        finishBtn.className = "btn-gold px-3 py-1.5 rounded-lg text-xs font-bold ml-auto";
+                        finishBtn.innerHTML = 'Lihat Keputusan Akhir 30/30 <i class="fa-solid fa-flag-checkered ml-1"></i>';
+                        finishBtn.onclick = () => this.showFinalResults();
+                        actionsEl.appendChild(finishBtn);
+                    }
+                }
+            }
+
+            showFloatingReward(msg) {
+                const el = document.getElementById('floating-reward');
+                document.getElementById('floating-reward-text').textContent = msg;
+                el.classList.remove('hidden');
+                setTimeout(() => el.classList.add('hidden'), 3200);
+            }
+
+            // Dipanggil selepas pemain atau AI selesai menggerakkan buah catur
+            onAfterChessMove(moveResult) {
+                this.updateBoardLockUI();
+
+                if (chess3D.chess.game_over()) {
+                    soundFX.play('victory');
+                    this.updateBoardLockUI();
+                    return;
+                }
+
+                // Jika giliran Hitam dan melawan Komputer AI
+                if (chess3D.chess.turn() === 'b' && this.state.difficulty !== '2p') {
+                    setTimeout(() => {
+                        chess3D.makeAIMove(this.state.difficulty);
+                    }, 550);
+                    return;
+                }
+
+                // Apabila kembali ke giliran pemain dalam Mod Cabaran Sejarah
+                if (this.state.mode === 'challenge') {
+                    this.state.chessMoveUnlocked = false;
+                    this.updateBoardLockUI();
+                    if (this.state.answeredIds.size >= 30) {
+                        this.showFinalResults();
+                    } else {
+                        this.loadNextQuestion();
+                    }
+                }
+            }
+
+            checkMissionMilestone(missionId) {
+                const missionQuestions = QUESTIONS_BANK.filter(q => q.mission === missionId);
+                const allAnswered = missionQuestions.every(q => this.state.answeredIds.has(q.id));
+                if (allAnswered && !this.state[`missionModalShown_${missionId}`]) {
+                    this.state[`missionModalShown_${missionId}`] = true;
+                    const meta = MISSIONS_METADATA.find(m => m.id === missionId);
+                    const correctInMission = this.state.missionCorrectCounts[missionId] || 0;
+
+                    document.getElementById('mc-title').textContent = `${meta.code} SELESAI!`;
+                    document.getElementById('mc-score-line').textContent = `Pencapaian Misi ${missionId}: ${correctInMission} / 6 Soalan Betul`;
+                    document.getElementById('mc-badge-earned').textContent =
+                        correctInMission === 6 ? "ANUGERAH: GOLD MISSION BADGE (6/6)!" : `MISI ${missionId} LENGKAP`;
+
+                    const factsList = document.getElementById('mc-facts-list');
+                    factsList.innerHTML = meta.facts.map(f => `<li>${f}</li>`).join('');
+
+                    soundFX.play('victory');
+                    document.getElementById('modal-mission-complete').classList.remove('hidden');
+                }
+            }
+
+            useHistoryHint() {
+                if (this.state.cpp < 1 || !this.state.currentQuestion) return;
+                const hintBox = document.getElementById('quiz-hint-box');
+                if (!hintBox.classList.contains('hidden')) return;
+
+                this.state.cpp--;
+                this.updateHeaderStats();
+                document.getElementById('quiz-hint-text').innerHTML = `<strong>Petunjuk Fakta:</strong> ${this.state.currentQuestion.hint}`;
+                hintBox.classList.remove('hidden');
+                soundFX.play('move');
+            }
+
+            useChessAssist() {
+                if (this.state.cpp < 1 || chess3D.chess.game_over()) return;
+                const moves = chess3D.chess.moves({ verbose: true });
+                if (moves.length === 0) return;
+
+                this.state.cpp--;
+                this.updateHeaderStats();
+
+                // Cari gerakan terbaik untuk Putih
+                const pieceValues = { p: 10, n: 32, b: 33, r: 50, q: 90, k: 900 };
+                let best = moves[0];
+                let bestScore = -999;
+                moves.forEach(m => {
+                    let s = Math.random() * 3;
+                    if (m.captured) s += pieceValues[m.captured] * 2;
+                    if (m.san.includes('+')) s += 15;
+                    if (s > bestScore) {
+                        bestScore = s;
+                        best = m;
+                    }
+                });
+
+                chess3D.highlightSuggestedMove(best.from, best.to);
+                this.showFloatingReward(`CADANGAN TAKTIKAL: GERAKKAN ${best.from.toUpperCase()} KE ${best.to.toUpperCase()} (${best.san})`);
+                soundFX.play('correct');
+            }
+
+            togglePause() {
+                this.state.isPaused = !this.state.isPaused;
+                const btn = document.getElementById('btn-pause');
+                btn.innerHTML = this.state.isPaused
+                    ? '<i class="fa-solid fa-play text-emerald-400"></i> <span class="hidden sm:inline">Sambung</span>'
+                    : '<i class="fa-solid fa-pause text-gold-400"></i> <span class="hidden sm:inline">Jeda</span>';
+            }
+
+            resetChessBoardOnly() {
+                chess3D.chess.reset();
+                chess3D.syncPiecesFromFEN();
+                document.getElementById('last-move-notation').textContent = '-';
+                this.updateBoardLockUI();
+                soundFX.play('move');
+            }
+
+            getAwardTitle(correctCount) {
+                if (correctCount >= 30) return "Grandmaster of History";
+                if (correctCount >= 27) return "Gold Chess Award";
+                if (correctCount >= 21) return "Silver Chess Award";
+                if (correctCount >= 15) return "Bronze Chess Award";
+                return "Perantis Catur Sejarah";
+            }
+
+            updateHeaderStats() {
+                document.getElementById('header-score').textContent = this.state.score;
+                document.getElementById('header-cpp').textContent = this.state.cpp;
+                document.getElementById('stat-correct').textContent = this.state.correctCount;
+                document.getElementById('stat-wrong').textContent = this.state.wrongCount;
+
+                const totalAttempted = this.state.correctCount + this.state.wrongCount;
+                const acc = totalAttempted > 0 ? Math.round((this.state.correctCount / totalAttempted) * 100) : 0;
+                document.getElementById('stat-accuracy').textContent = `${acc}%`;
+                document.getElementById('stat-rank').textContent = this.getAwardTitle(this.state.correctCount);
+            }
+
+            showFinalResults() {
+                this.stopQuestionTimer();
+                soundFX.play('victory');
+                this.showScreen('result');
+
+                const c = this.state.correctCount;
+                const w = this.state.wrongCount;
+                const pct = Math.round((c / 30) * 100);
+                const mins = Math.floor(this.state.totalSecondsElapsed / 60);
+                const secs = this.state.totalSecondsElapsed % 60;
+                const award = this.getAwardTitle(c);
+
+                document.getElementById('result-award-title').textContent =
+                    c === 30 ? "TAHNIAH! GELARAN GRANDMASTER OF HISTORY (30/30)!" : `ANUGERAH: ${award.toUpperCase()}`;
+                document.getElementById('res-player-name').textContent = this.state.player1Name;
+                document.getElementById('res-total-score').textContent = `${this.state.score} / 300 Mata`;
+                document.getElementById('res-correct-wrong').textContent = `${c} Betul / ${w} Salah`;
+                document.getElementById('res-percentage').textContent = `${pct}%`;
+                document.getElementById('res-time-spent').textContent = `${String(mins).padStart(2, '0')}m ${String(secs).padStart(2, '0')}s`;
+
+                let completedMissions = 0;
+                for (let m = 1; m <= 5; m++) {
+                    const mQs = QUESTIONS_BANK.filter(q => q.mission === m);
+                    if (mQs.every(q => this.state.answeredIds.has(q.id))) completedMissions++;
+                }
+                document.getElementById('res-missions-done').textContent = `${completedMissions} / 5 Misi`;
+                document.getElementById('res-final-rank').textContent = award;
+            }
+
+            restartFullChallenge() {
+                this.state.score = 0;
+                this.state.cpp = 2;
+                this.state.correctCount = 0;
+                this.state.wrongCount = 0;
+                this.state.answeredIds.clear();
+                this.state.missionCorrectCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+                this.state.currentMissionId = 1;
+                this.state.chessMoveUnlocked = false;
+                this.state.totalSecondsElapsed = 0;
+                for (let m = 1; m <= 5; m++) delete this.state[`missionModalShown_${m}`];
+
+                chess3D.chess.reset();
+                if (this.state.threeInitialized) chess3D.syncPiecesFromFEN();
+                this.updateHeaderStats();
+                this.startGame('challenge', 1);
+            }
+
+            renderHomeMissions() {
+                const container = document.getElementById('home-mission-list');
+                const modalSelector = document.getElementById('modal-mission-selector');
+                if (!container) return;
+
+                let goldBadges = 0;
+                let html = '';
+                let modalHtml = '';
+
+                MISSIONS_METADATA.forEach(m => {
+                    const mQs = QUESTIONS_BANK.filter(q => q.mission === m.id);
+                    const doneCount = mQs.filter(q => this.state.answeredIds.has(q.id)).length;
+                    const correctCount = this.state.missionCorrectCounts[m.id] || 0;
+                    if (correctCount === 6) goldBadges++;
+
+                    html += `
+                        <div onclick="app.startGame('challenge', ${m.id})" class="bg-navy-950/85 hover:bg-navy-800/90 border border-slate-800 hover:border-gold-500/60 rounded-xl p-3 flex items-center justify-between gap-3 cursor-pointer transition-all">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-gold-500/15 border border-gold-500/40 flex items-center justify-center text-gold-400 text-lg shrink-0">
+                                    <i class="fa-solid ${m.pieceIcon}"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-extrabold text-electric-400 uppercase">${m.code}</span>
+                                        <span class="text-[10px] px-1.5 py-0.2 rounded bg-navy-800 text-gold-300">${m.stageName}</span>
+                                    </div>
+                                    <h4 class="text-xs sm:text-sm font-bold text-white">${m.title}</h4>
+                                </div>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <div class="text-xs font-extrabold ${doneCount === 6 ? 'text-emerald-400' : 'text-gold-300'}">${doneCount}/6</div>
+                                <div class="text-[10px] text-slate-400">${correctCount === 6 ? '🏅 Emas' : 'Soalan'}</div>
+                            </div>
+                        </div>
+                    `;
+
+                    modalHtml += `
+                        <button onclick="app.closeModals(); app.startGame('challenge', ${m.id});" class="btn-navy p-3 rounded-xl text-left flex items-center justify-between">
+                            <div>
+                                <div class="text-[10px] font-bold text-gold-400">${m.code}</div>
+                                <div class="text-xs font-bold text-white">${m.title}</div>
+                            </div>
+                            <span class="text-xs font-bold text-electric-400">${doneCount}/6</span>
+                        </button>
+                    `;
+                });
+
+                container.innerHTML = html;
+                if (modalSelector) modalSelector.innerHTML = modalHtml;
+                document.getElementById('home-badges-count').textContent = `${goldBadges} / 5 Lencana Emas`;
+            }
+
+            renderStudyList(missionFilter) {
+                const container = document.getElementById('study-questions-container');
+                if (!container) return;
+
+                const letters = ['A', 'B', 'C', 'D'];
+                const filtered = missionFilter === 'all'
+                    ? QUESTIONS_BANK
+                    : QUESTIONS_BANK.filter(q => q.mission === parseInt(missionFilter, 10));
+
+                container.innerHTML = filtered.map(q => {
+                    const meta = MISSIONS_METADATA.find(m => m.id === q.mission);
+                    return `
+                        <div class="bg-navy-950/90 border border-slate-800 rounded-xl p-4 space-y-2">
+                            <div class="flex items-center justify-between text-[11px]">
+                                <span class="font-bold text-electric-400">${meta.code} • ${meta.title}</span>
+                                <span class="px-2 py-0.5 rounded bg-gold-500/20 text-gold-300 font-bold">Soalan #${q.id}</span>
+                            </div>
+                            <p class="text-xs sm:text-sm font-bold text-white">${q.question}</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+                                ${q.options.map((opt, idx) => `
+                                    <div class="p-2 rounded-lg text-xs border ${idx === q.correctIndex ? 'bg-emerald-950/80 border-emerald-400 text-emerald-200 font-bold' : 'bg-navy-900/60 border-slate-800 text-slate-400'}">
+                                        <span class="mr-1.5">${letters[idx]}.</span> ${opt}
+                                        ${idx === q.correctIndex ? '<i class="fa-solid fa-check float-right mt-0.5 text-emerald-400"></i>' : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="text-xs text-slate-300 bg-navy-900/90 p-2.5 rounded-lg border border-gold-500/20 mt-1">
+                                <strong class="text-gold-400"><i class="fa-solid fa-circle-check mr-1"></i>Fakta Buku Teks:</strong> ${q.explanation}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderFactsModal() {
+                const container = document.getElementById('facts-summary-container');
+                if (!container) return;
+                container.innerHTML = MISSIONS_METADATA.map(m => `
+                    <div class="bg-navy-950 p-4 rounded-xl border border-gold-500/30 space-y-2">
+                        <div class="font-bold text-gold-300 text-sm flex items-center gap-2">
+                            <i class="fa-solid ${m.pieceIcon} text-electric-400"></i> ${m.code}: ${m.title}
+                        </div>
+                        <ul class="list-disc pl-5 space-y-1 text-slate-300">
+                            ${m.facts.map(f => `<li>${f}</li>`).join('')}
+                        </ul>
+                    </div>
+                `).join('');
+            }
+
+            openModal(name) {
+                this.closeModals();
+                if (name === 'records') {
+                    this.renderRecordsModal();
+                } else if (name === 'teacher') {
+                    this.renderTeacherModal();
+                } else if (name === 'mode') {
+                    this.renderHomeMissions();
+                }
+                const el = document.getElementById(`modal-${name}`);
+                if (el) el.classList.remove('hidden');
+            }
+
+            closeModals() {
+                ['mode', 'mission-complete', 'promotion', 'study', 'records', 'guide', 'teacher', 'facts'].forEach(m => {
+                    const el = document.getElementById(`modal-${m}`);
+                    if (el) el.classList.add('hidden');
+                });
+            }
+
+            renderRecordsModal() {
+                const c = this.state.correctCount;
+                const badges = [
+                    { title: "Bronze Chess Award", desc: "Menjawab sekurang-kurangnya 15/30 soalan dengan tepat", unlocked: c >= 15, icon: "fa-chess-knight" },
+                    { title: "Silver Chess Award", desc: "Menjawab sekurang-kurangnya 21/30 soalan dengan tepat", unlocked: c >= 21, icon: "fa-chess-rook" },
+                    { title: "Gold Chess Award", desc: "Menjawab sekurang-kurangnya 27/30 soalan dengan tepat", unlocked: c >= 27, icon: "fa-chess-queen" },
+                    { title: "Grandmaster of History", desc: "Skor Sempurna 30/30 Soalan Sejarah Bab 10", unlocked: c >= 30, icon: "fa-crown" }
+                ];
+
+                MISSIONS_METADATA.forEach(m => {
+                    const mCorrect = this.state.missionCorrectCounts[m.id] || 0;
+                    badges.push({
+                        title: `Gold Mission Badge: Misi ${m.id}`,
+                        desc: `6/6 Betul dalam ${m.title} (${mCorrect}/6)`,
+                        unlocked: mCorrect === 6,
+                        icon: m.pieceIcon
+                    });
+                });
+
+                document.getElementById('records-badges-grid').innerHTML = badges.map(b => `
+                    <div class="p-3.5 rounded-xl border flex items-center gap-3 ${b.unlocked ? 'bg-gold-500/15 border-gold-400 text-white' : 'bg-navy-950/70 border-slate-800 text-slate-500'}">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 ${b.unlocked ? 'bg-gold-500 text-navy-950' : 'bg-navy-900 text-slate-600'}">
+                            <i class="fa-solid ${b.icon}"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs sm:text-sm font-bold ${b.unlocked ? 'text-gold-300' : 'text-slate-400'}">${b.title}</div>
+                            <div class="text-[11px] opacity-80">${b.desc}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderTeacherModal() {
+                const container = document.getElementById('teacher-mission-breakdown');
+                if (!container) return;
+                container.innerHTML = MISSIONS_METADATA.map(m => {
+                    const mQs = QUESTIONS_BANK.filter(q => q.mission === m.id);
+                    const answered = mQs.filter(q => this.state.answeredIds.has(q.id)).length;
+                    const correct = this.state.missionCorrectCounts[m.id] || 0;
+                    return `
+                        <div class="bg-navy-950/90 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
+                            <div>
+                                <div class="font-bold text-white">${m.code}: ${m.title}</div>
+                                <div class="text-slate-400 text-[11px]">Dijawab: ${answered}/6 • Betul: ${correct}/6</div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg font-bold ${correct === 6 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-electric-500/20 text-electric-400'}">
+                                ${Math.round((correct / 6) * 100)}%
+                            </span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        const app = new GameController();
+
+        window.onload = function () {
+            app.init();
+        };
+    </script>
+</body>
+</html>
